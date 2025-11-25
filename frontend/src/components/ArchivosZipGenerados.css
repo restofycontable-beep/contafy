@@ -1,0 +1,250 @@
+.archivos-zip-container {
+  padding: 32px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.archivos-zip-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 2px solid var(--color-borde);
+}
+
+.archivos-zip-header h2 {
+  color: var(--color-texto);
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.archivos-zip-header p {
+  color: var(--color-texto-secundario);
+  font-size: 16px;
+  margin: 8px 0 0 0;
+}
+
+.btn-refresh {
+  background: var(--color-principal);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.btn-refresh:hover {
+  background: var(--color-principal-hover);
+  transform: translateY(-1px);
+}
+
+.archivos-zip-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.archivo-zip-item {
+  background: var(--color-blanco);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--color-borde);
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: var(--transition);
+}
+
+.archivo-zip-item:hover {
+  box-shadow: 0 4px 12px var(--color-sombra);
+  border-color: var(--color-principal);
+}
+
+.archivo-zip-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-grow: 1;
+}
+
+.archivo-zip-icon {
+  font-size: 32px;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-fondo);
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+
+.archivo-zip-details h4 {
+  color: var(--color-texto);
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+}
+
+.archivo-zip-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 14px;
+  color: var(--color-texto-secundario);
+}
+
+.archivo-zip-meta span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.tipo-procesamiento {
+  background: var(--color-principal);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.empresa {
+  font-weight: 500;
+}
+
+.cedula {
+  font-weight: 500;
+}
+
+.fecha {
+  font-style: italic;
+}
+
+.tamano {
+  font-weight: 500;
+  color: var(--color-texto);
+}
+
+.archivo-zip-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-download {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+}
+
+.btn-download:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+}
+
+.btn-download:active {
+  transform: translateY(0);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--color-texto-secundario);
+}
+
+.empty-icon {
+  font-size: 64px;
+  display: block;
+  margin-bottom: 16px;
+}
+
+.empty-state h3 {
+  color: var(--color-texto);
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+}
+
+.empty-state p {
+  font-size: 16px;
+  margin: 0;
+}
+
+.loading-message,
+.error-message {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.loading-icon,
+.error-icon {
+  font-size: 48px;
+  display: block;
+  margin-bottom: 16px;
+}
+
+.loading-message p,
+.error-message p {
+  font-size: 18px;
+  margin: 0 0 16px 0;
+}
+
+.btn-retry {
+  background: var(--color-principal);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.btn-retry:hover {
+  background: var(--color-principal-hover);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .archivos-zip-container {
+    padding: 16px;
+  }
+  
+  .archivos-zip-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  
+  .archivo-zip-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  
+  .archivo-zip-info {
+    width: 100%;
+  }
+  
+  .archivo-zip-meta {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .archivo-zip-actions {
+    width: 100%;
+    justify-content: center;
+  }
+}

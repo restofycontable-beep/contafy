@@ -1,0 +1,103 @@
+/* Reset y configuración base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f8fafc;
+  color: #1e293b;
+  line-height: 1.6;
+}
+
+/* Variables CSS */
+:root {
+  --color-principal: #FF193E;
+  --color-principal-dark: #d10e2e;
+  --color-exito: #2ecc71;
+  --color-exito-dark: #27ae60;
+  --color-texto: #1e293b;
+  --color-texto-secundario: #64748b;
+  --color-fondo: #f8fafc;
+  --color-blanco: #fff;
+  --color-borde: #e2e8f0;
+  --color-sombra: rgba(0,0,0,0.08);
+  --color-sombra-principal: rgba(255, 25, 62, 0.11);
+  --border-radius: 0.7rem;
+  --transition: all 0.2s;
+}
+
+/* Animaciones suaves */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeIn 0.7s cubic-bezier(.4,0,.2,1);
+}
+
+/* Scrollbar personalizado */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Layout principal */
+.app-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Contenido principal */
+.main-content {
+  flex: 1;
+  margin-left: 260px;
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+  padding-top: 80px;
+  min-height: 100vh;
+  transition: margin-left var(--transition-base);
+}
+
+/* Responsive - Tablet */
+@media (max-width: 1024px) {
+  .main-content {
+    margin-left: 0;
+    padding-top: 70px;
+  }
+}
+
+/* Responsive - Mobile */
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0;
+    padding-top: 70px;
+  }
+}
+
+/* Responsive - Mobile pequeño */
+@media (max-width: 480px) {
+  .main-content {
+    padding-top: 64px;
+  }
+} 

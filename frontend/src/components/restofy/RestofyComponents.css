@@ -1,0 +1,573 @@
+/* Estilos para componentes de Restofy */
+.restofy-container,
+.facturas-container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.restofy-header,
+.facturas-header {
+  margin-bottom: 24px;
+}
+
+.restofy-header h3,
+.facturas-header h3 {
+  margin: 0 0 8px 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.restofy-subtitle,
+.facturas-subtitle {
+  margin: 0;
+  color: #7f8c8d;
+  font-size: 14px;
+}
+
+/* Filtros */
+.restofy-filters,
+.facturas-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  align-items: flex-end;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 200px;
+}
+
+.filter-group label {
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #2c3e50;
+  font-size: 14px;
+}
+
+.filter-input {
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.filter-input:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.filter-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* Tabla */
+.restofy-table-container,
+.facturas-table-container {
+  overflow-x: auto;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.restofy-table,
+.facturas-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  font-size: 14px;
+}
+
+.restofy-table thead {
+  background: #34495e;
+  color: white;
+}
+
+.restofy-table th {
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.restofy-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #ecf0f1;
+}
+
+.restofy-table tbody tr:hover {
+  background: #f8f9fa;
+}
+
+.restofy-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.table-description {
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.table-price {
+  font-weight: 600;
+  color: #27ae60;
+  text-align: right;
+}
+
+/* Paginación */
+.restofy-pagination,
+.facturas-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 24px;
+  padding: 16px;
+}
+
+.pagination-info {
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+/* Estados */
+.restofy-loading,
+.restofy-empty,
+.restofy-error,
+.facturas-loading,
+.facturas-empty,
+.facturas-error {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.restofy-loading .loading-icon,
+.restofy-empty .empty-icon,
+.restofy-error .error-icon,
+.facturas-loading .loading-icon,
+.facturas-empty .empty-icon,
+.facturas-error .error-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  display: block;
+}
+
+.restofy-loading p,
+.restofy-empty h4,
+.restofy-error h3,
+.facturas-loading p,
+.facturas-empty h4,
+.facturas-error h3 {
+  margin: 0 0 8px 0;
+  color: #2c3e50;
+}
+
+.restofy-empty p,
+.restofy-error p,
+.facturas-empty p,
+.facturas-error p {
+  margin: 0;
+  color: #7f8c8d;
+}
+
+.restofy-error-message,
+.facturas-error-message {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: #fee;
+  border: 1px solid #fcc;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  color: #c33;
+}
+
+.restofy-error-message .error-icon,
+.facturas-error-message .error-icon {
+  font-size: 20px;
+}
+
+.restofy-error-message p,
+.facturas-error-message p {
+  margin: 0;
+  flex: 1;
+}
+
+/* Badges */
+.badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge-success {
+  background: #d4edda;
+  color: #155724;
+}
+
+.badge-danger {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.badge-warning {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.badge-info {
+  background: #d1ecf1;
+  color: #0c5460;
+}
+
+/* Botones */
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: #3498db;
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #2980b9;
+}
+
+.btn-secondary {
+  background: #95a5a6;
+  color: white;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: #7f8c8d;
+}
+
+.btn-link {
+  background: transparent;
+  color: #3498db;
+  padding: 6px 12px;
+  font-size: 13px;
+}
+
+.btn-link:hover:not(:disabled) {
+  text-decoration: underline;
+}
+
+/* Panel principal */
+.restofy-panel {
+  width: 100%;
+}
+
+/* Tabs */
+.restofy-tabs {
+  display: flex;
+  gap: 8px;
+  border-bottom: 2px solid #ecf0f1;
+  margin-bottom: 24px;
+  overflow-x: auto;
+}
+
+.restofy-tab {
+  padding: 12px 24px;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: #7f8c8d;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.restofy-tab:hover {
+  color: #2c3e50;
+  background: #f8f9fa;
+}
+
+.restofy-tab.active {
+  color: #3498db;
+  border-bottom-color: #3498db;
+  background: transparent;
+}
+
+.restofy-tab-content {
+  animation: fadeIn 0.3s;
+  min-height: 400px;
+}
+
+/* Ajustes para cuando FacturasElectronicas está dentro del panel */
+.restofy-panel .facturas-container {
+  padding: 0;
+  margin: 0;
+  box-shadow: none;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Clases adicionales para FacturasElectronicas */
+.factura-total {
+  font-weight: 600;
+  color: #27ae60;
+  text-align: right;
+}
+
+/* Responsive mejorado - Tablet */
+@media (max-width: 1024px) {
+  .restofy-container,
+  .facturas-container {
+    padding: var(--spacing-md);
+    max-width: 100%;
+  }
+  
+  .restofy-header h3,
+  .facturas-header h3 {
+    font-size: 20px;
+  }
+  
+  .restofy-filters,
+  .facturas-filters {
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+  }
+  
+  .filter-group {
+    min-width: 200px;
+    flex: 1;
+  }
+  
+  .restofy-table-container,
+  .facturas-table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Responsive - Mobile */
+@media (max-width: 768px) {
+  .restofy-container,
+  .facturas-container {
+    padding: var(--spacing-sm);
+  }
+  
+  .restofy-header,
+  .facturas-header {
+    margin-bottom: var(--spacing-md);
+  }
+  
+  .restofy-header h3,
+  .facturas-header h3 {
+    font-size: 1.25rem;
+  }
+  
+  .restofy-subtitle,
+  .facturas-subtitle {
+    font-size: 0.85rem;
+  }
+
+  .restofy-filters,
+  .facturas-filters {
+    flex-direction: column;
+    padding: var(--spacing-sm);
+    gap: var(--spacing-sm);
+    align-items: stretch;
+  }
+
+  .filter-group {
+    min-width: 0;
+    width: 100%;
+  }
+  
+  .filter-input {
+    width: 100%;
+    font-size: 16px; /* Evitar zoom en iOS */
+  }
+
+  .filter-actions {
+    width: 100%;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+  }
+
+  .filter-actions button {
+    width: 100%;
+    flex: 1;
+  }
+
+  .restofy-table-container,
+  .facturas-table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 0 calc(-1 * var(--spacing-sm));
+    padding: 0 var(--spacing-sm);
+  }
+
+  .restofy-table,
+  .facturas-table {
+    font-size: 12px;
+    min-width: 600px;
+  }
+
+  .restofy-table th,
+  .restofy-table td,
+  .facturas-table th,
+  .facturas-table td {
+    padding: 8px 10px;
+    white-space: nowrap;
+  }
+  
+  .restofy-table th:first-child,
+  .restofy-table td:first-child,
+  .facturas-table th:first-child,
+  .facturas-table td:first-child {
+    position: sticky;
+    left: 0;
+    background: white;
+    z-index: 1;
+  }
+  
+  .restofy-table thead th:first-child,
+  .facturas-table thead th:first-child {
+    background: #34495e;
+    z-index: 2;
+  }
+
+  .restofy-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    gap: var(--spacing-xs);
+  }
+
+  .restofy-tab {
+    padding: 10px 16px;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+  
+  .restofy-pagination,
+  .facturas-pagination {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm);
+  }
+  
+  .pagination-info {
+    order: -1;
+  }
+  
+  .restofy-loading,
+  .restofy-empty,
+  .restofy-error,
+  .facturas-loading,
+  .facturas-empty,
+  .facturas-error {
+    padding: var(--spacing-lg) var(--spacing-md);
+  }
+  
+  .restofy-loading .loading-icon,
+  .restofy-empty .empty-icon,
+  .restofy-error .error-icon,
+  .facturas-loading .loading-icon,
+  .facturas-empty .empty-icon,
+  .facturas-error .error-icon {
+    font-size: 36px;
+  }
+}
+
+/* Responsive - Mobile pequeño */
+@media (max-width: 480px) {
+  .restofy-container,
+  .facturas-container {
+    padding: var(--spacing-xs);
+  }
+  
+  .restofy-header h3,
+  .facturas-header h3 {
+    font-size: 1.1rem;
+  }
+  
+  .restofy-filters,
+  .facturas-filters {
+    padding: var(--spacing-xs);
+  }
+  
+  .restofy-table,
+  .facturas-table {
+    font-size: 11px;
+    min-width: 500px;
+  }
+  
+  .restofy-table th,
+  .restofy-table td,
+  .facturas-table th,
+  .facturas-table td {
+    padding: 6px 8px;
+  }
+  
+  .restofy-tab {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+  
+  .badge {
+    font-size: 10px;
+    padding: 3px 8px;
+  }
+  
+  .btn {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+  
+  .btn-link {
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+}
+

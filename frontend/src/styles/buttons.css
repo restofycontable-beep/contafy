@@ -1,0 +1,166 @@
+/* Botones modernos uniformes */
+.btn, .modal-dian-btn {
+  padding: 14px 28px;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 140px;
+  height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  white-space: nowrap;
+  box-sizing: border-box;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.10);
+  margin-bottom: 0.2rem;
+}
+
+.btn-primary, .modal-dian-btn-juridica {
+  background: var(--color-principal);
+  color: var(--color-blanco);
+  box-shadow: 0 4px 24px rgba(255, 25, 62, 0.2);
+}
+
+.btn-primary:hover, .modal-dian-btn-juridica:hover {
+  background: var(--color-principal-dark);
+  color: var(--color-blanco);
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 30px rgba(255, 25, 62, 0.4);
+}
+
+.btn-success {
+  background: var(--color-exito);
+  color: var(--color-blanco);
+  box-shadow: 0 4px 24px rgba(46, 204, 113, 0.2);
+}
+
+.btn-success:hover {
+  background: var(--color-exito-dark);
+  color: var(--color-blanco);
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 30px rgba(46, 204, 113, 0.4);
+}
+
+.btn-secondary, .empty-state-btn-secondary {
+  background: var(--color-blanco);
+  color: var(--color-principal);
+  border: 2px solid var(--color-principal);
+  box-shadow: none;
+}
+
+.btn-secondary:hover, .empty-state-btn-secondary:hover {
+  background: #fff1f3;
+  color: var(--color-principal-dark);
+  border-color: var(--color-principal-dark);
+  transform: translateY(-1px) scale(1.02);
+  box-shadow: 0 6px 25px rgba(255, 25, 62, 0.2);
+}
+
+/* Estados deshabilitados */
+.btn:disabled, .modal-dian-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .btn {
+    flex: 1;
+    justify-content: center;
+  }
+} 
+
+/* Botón con estado de carga */
+.btn.loading {
+  position: relative;
+  color: transparent;
+  pointer-events: none;
+}
+
+.btn.loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 16px;
+  height: 16px;
+  margin: -8px 0 0 -8px;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Mensaje de estado en el header */
+.header-message {
+  font-size: 0.8rem;
+  margin-top: 4px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  max-width: 300px;
+  word-wrap: break-word;
+}
+
+/* Botón deshabilitado */
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Botón de advertencia */
+.btn-warning {
+  background-color: #ffc107;
+  border-color: #ffc107;
+  color: #212529;
+}
+
+.btn-warning:hover {
+  background-color: #e0a800;
+  border-color: #d39e00;
+}
+
+/* Botón de información */
+.btn-info {
+  background-color: #17a2b8;
+  border-color: #17a2b8;
+  color: white;
+}
+
+.btn-info:hover {
+  background-color: #138496;
+  border-color: #117a8b;
+}
+
+/* Animación de aparición para mensajes */
+.fade-in-message {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+} 

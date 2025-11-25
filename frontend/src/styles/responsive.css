@@ -1,0 +1,271 @@
+/**
+ * Sistema de Responsive Design Profesional
+ * Breakpoints y utilidades para diseño responsive
+ */
+
+/* ============================================
+   BREAKPOINTS Y VARIABLES
+   ============================================ */
+:root {
+  /* Breakpoints */
+  --breakpoint-xs: 480px;
+  --breakpoint-sm: 768px;
+  --breakpoint-md: 1024px;
+  --breakpoint-lg: 1280px;
+  --breakpoint-xl: 1536px;
+  
+  /* Espaciados responsive */
+  --spacing-xs: 8px;
+  --spacing-sm: 16px;
+  --spacing-md: 24px;
+  --spacing-lg: 32px;
+  --spacing-xl: 48px;
+  
+  /* Tamaños de fuente responsive */
+  --font-size-xs: 0.75rem;    /* 12px */
+  --font-size-sm: 0.875rem;   /* 14px */
+  --font-size-base: 1rem;     /* 16px */
+  --font-size-lg: 1.125rem;   /* 18px */
+  --font-size-xl: 1.25rem;    /* 20px */
+  --font-size-2xl: 1.5rem;    /* 24px */
+  --font-size-3xl: 1.875rem;  /* 30px */
+  --font-size-4xl: 2.25rem;   /* 36px */
+  
+  /* Z-index layers */
+  --z-sidebar: 1000;
+  --z-header: 1100;
+  --z-modal: 1200;
+  --z-dropdown: 1300;
+  --z-toast: 1400;
+  
+  /* Transiciones */
+  --transition-fast: 0.15s ease;
+  --transition-base: 0.3s ease;
+  --transition-slow: 0.5s ease;
+}
+
+/* ============================================
+   UTILIDADES RESPONSIVE
+   ============================================ */
+
+/* Ocultar en móvil */
+@media (max-width: 767px) {
+  .hide-mobile {
+    display: none !important;
+  }
+}
+
+/* Ocultar en desktop */
+.hide-desktop {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .hide-desktop {
+    display: block;
+  }
+}
+
+/* Mostrar solo en móvil */
+.show-mobile-only {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .show-mobile-only {
+    display: block !important;
+  }
+}
+
+/* Mostrar solo en desktop */
+.show-desktop-only {
+  display: block;
+}
+
+@media (max-width: 767px) {
+  .show-desktop-only {
+    display: none !important;
+  }
+}
+
+/* ============================================
+   CONTAINER RESPONSIVE
+   ============================================ */
+.container {
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 var(--spacing-md);
+}
+
+@media (min-width: 640px) {
+  .container {
+    max-width: 640px;
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    max-width: 768px;
+    padding: 0 var(--spacing-lg);
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    max-width: 1024px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container {
+    max-width: 1280px;
+  }
+}
+
+@media (min-width: 1536px) {
+  .container {
+    max-width: 1536px;
+  }
+}
+
+/* ============================================
+   GRID RESPONSIVE
+   ============================================ */
+.grid-responsive {
+  display: grid;
+  gap: var(--spacing-md);
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+  .grid-responsive {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid-responsive {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1280px) {
+  .grid-responsive {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* ============================================
+   FLEX RESPONSIVE
+   ============================================ */
+.flex-responsive {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+@media (min-width: 768px) {
+  .flex-responsive {
+    flex-direction: row;
+  }
+}
+
+/* ============================================
+   TIPOGRAFÍA RESPONSIVE
+   ============================================ */
+.text-responsive-xs {
+  font-size: var(--font-size-xs);
+}
+
+.text-responsive-sm {
+  font-size: var(--font-size-sm);
+}
+
+.text-responsive-base {
+  font-size: var(--font-size-base);
+}
+
+.text-responsive-lg {
+  font-size: var(--font-size-lg);
+}
+
+@media (min-width: 768px) {
+  .text-responsive-xs {
+    font-size: var(--font-size-sm);
+  }
+  
+  .text-responsive-sm {
+    font-size: var(--font-size-base);
+  }
+  
+  .text-responsive-base {
+    font-size: var(--font-size-lg);
+  }
+  
+  .text-responsive-lg {
+    font-size: var(--font-size-xl);
+  }
+}
+
+/* ============================================
+   ESPACIADO RESPONSIVE
+   ============================================ */
+.padding-responsive {
+  padding: var(--spacing-sm);
+}
+
+@media (min-width: 768px) {
+  .padding-responsive {
+    padding: var(--spacing-md);
+  }
+}
+
+@media (min-width: 1024px) {
+  .padding-responsive {
+    padding: var(--spacing-lg);
+  }
+}
+
+.margin-responsive {
+  margin: var(--spacing-sm);
+}
+
+@media (min-width: 768px) {
+  .margin-responsive {
+    margin: var(--spacing-md);
+  }
+}
+
+@media (min-width: 1024px) {
+  .margin-responsive {
+    margin: var(--spacing-lg);
+  }
+}
+
+/* ============================================
+   OVERLAY PARA MÓVIL (cuando sidebar está abierto)
+   ============================================ */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: calc(var(--z-sidebar) - 1);
+  opacity: 0;
+  transition: opacity var(--transition-base);
+}
+
+.sidebar-overlay.active {
+  display: block;
+  opacity: 1;
+}
+
+@media (min-width: 1025px) {
+  .sidebar-overlay {
+    display: none !important;
+  }
+}
+

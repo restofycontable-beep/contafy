@@ -1,0 +1,1799 @@
+.crear-empresa-container {
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  background: #f1f5f9;
+  min-height: 100vh;
+}
+
+.crear-empresa-header {
+  background: linear-gradient(135deg, #ff193e 0%, #e11d48 50%, #dc2626 100%);
+  color: white;
+  padding: 2rem 0;
+  margin: 0;
+  margin-bottom: 3rem;
+  position: sticky;
+  top: 80px;
+  z-index: 50;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(255, 25, 62, 0.3);
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  box-sizing: border-box;
+}
+
+.crear-empresa-header .welcome-section {
+  max-width: 1800px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-lg);
+  box-sizing: border-box;
+  position: relative;
+  z-index: 2;
+  text-align: center;
+}
+
+/* Responsive Header */
+@media (max-width: 768px) {
+  .crear-empresa-header {
+    top: 70px;
+    padding: 1.5rem 0;
+    margin-bottom: 2rem;
+  }
+  
+  .crear-empresa-header .welcome-section {
+    padding: 0 var(--spacing-md);
+  }
+}
+
+@media (max-width: 480px) {
+  .crear-empresa-header {
+    top: 64px;
+    padding: 1.25rem 0;
+    margin-bottom: 1.5rem;
+  }
+  
+  .crear-empresa-header .welcome-section {
+    padding: 0 var(--spacing-sm);
+  }
+  
+  .crear-empresa-subtitle {
+    font-size: 0.95rem;
+    padding: 0 1rem;
+  }
+}
+
+.crear-empresa-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 80%, rgba(255,255,255,0.1) 0%, transparent 50%);
+  opacity: 0.6;
+}
+
+.crear-empresa-subtitle {
+  font-size: 1.1rem;
+  opacity: 1;
+  margin: 0 auto;
+  padding: 0 2rem;
+  font-weight: 400;
+  line-height: 1.6;
+  max-width: 800px;
+  box-sizing: border-box;
+  word-wrap: break-word;
+  color: white !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.crear-empresa-container > .empresa-form-card {
+  max-width: 1800px;
+  margin: 0 auto;
+  padding: var(--spacing-xl);
+  padding-top: var(--spacing-xl);
+}
+
+.empresa-form-card {
+  background: var(--color-blanco);
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 20px var(--color-sombra);
+  padding: var(--spacing-xl);
+  padding-top: var(--spacing-xl);
+  border: 1px solid var(--color-borde);
+  position: relative;
+  z-index: 1;
+}
+
+/* Responsive Form Card */
+@media (max-width: 1024px) {
+  .crear-empresa-container > .empresa-form-card {
+    padding: var(--spacing-lg);
+  }
+  
+  .empresa-form-card {
+    padding: var(--spacing-lg);
+  }
+}
+
+@media (max-width: 768px) {
+  .crear-empresa-container > .empresa-form-card {
+    padding: var(--spacing-md);
+    margin: 0 var(--spacing-sm);
+  }
+  
+  .empresa-form-card {
+    padding: var(--spacing-md);
+  }
+}
+
+@media (max-width: 480px) {
+  .crear-empresa-container > .empresa-form-card {
+    padding: var(--spacing-sm);
+    margin: 0 var(--spacing-xs);
+  }
+  
+  .empresa-form-card {
+    padding: var(--spacing-sm);
+    border-radius: 12px;
+  }
+  
+  .message {
+    padding: 16px 18px;
+    font-size: 14px;
+    margin-top: 0;
+    z-index: 60;
+  }
+  
+  .tabs-container {
+    margin-bottom: 1.5rem;
+  }
+}
+
+.form-header {
+  text-align: center;
+  margin-bottom: 2.5rem; /* Aumentado de 32px a 2.5rem (40px) */
+  padding-bottom: 2rem; /* Aumentado de 24px a 2rem (32px) */
+  border-bottom: 2px solid var(--color-borde);
+}
+
+.form-header h2 {
+  color: var(--color-texto);
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.form-header p {
+  color: var(--color-texto-secundario);
+  font-size: 16px;
+  margin: 0;
+}
+
+.message {
+  padding: 20px 24px;
+  border-radius: var(--border-radius);
+  margin-bottom: 24px;
+  margin-top: 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  font-weight: 500;
+  position: relative;
+  z-index: 60;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  animation: slideDown 0.3s ease-out;
+  min-height: auto;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.message-content {
+  flex: 1;
+  white-space: pre-line;
+  word-wrap: break-word;
+  line-height: 1.6;
+  font-weight: 500;
+}
+
+.message.success {
+  background: var(--color-exito-bg);
+  color: var(--color-exito);
+  border: 1px solid var(--color-exito);
+}
+
+.message.error {
+  background: var(--color-error-bg);
+  color: var(--color-error);
+  border: 1px solid var(--color-error);
+}
+
+.message.warning {
+  background: #fff4e6;
+  color: #d97706;
+  border: 1px solid #fbbf24;
+}
+
+.message.info {
+  background: #e3f2fd;
+  color: #1976d2;
+  border: 1px solid #2196f3;
+}
+
+.empresa-form {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem; /* Aumentado de 32px a 2.5rem (40px) */
+}
+
+/* Estilos para pestañas dentro del formulario */
+.empresa-form .tabs-container {
+  width: 100%;
+  position: relative;
+  z-index: 5;
+}
+
+.empresa-form .tabs-content {
+  min-height: 400px;
+}
+
+/* Asegurar que los tabs siempre sean visibles */
+.tabs-container {
+  width: 100%;
+  position: relative;
+  z-index: 5;
+  margin-bottom: 2rem;
+}
+
+/* Asegurar que tabs no se oculten */
+.tabs-header {
+  position: relative;
+  z-index: 5;
+  background: transparent;
+}
+
+/* Asegurar que tabs siempre sean visibles */
+.tabs-container {
+  width: 100%;
+  position: relative;
+  z-index: 5;
+  margin-bottom: 2rem;
+}
+
+.form-section {
+  background: var(--color-fondo);
+  padding: 2rem; /* Aumentado de 24px a 2rem (32px) */
+  border-radius: var(--border-radius);
+  border: 1px solid var(--color-borde);
+}
+
+/* Estilos para selector de plantillas */
+.template-selector {
+  margin-bottom: 24px;
+  padding: 16px;
+  background: #e3f2fd;
+  border-radius: var(--border-radius);
+  border: 1px solid #1976d2;
+}
+
+.template-selector label {
+  font-weight: 600;
+  color: var(--color-texto);
+  margin-bottom: 8px;
+  display: block;
+}
+
+.form-select {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--border-radius);
+  font-size: 16px;
+  background: white;
+  color: var(--color-texto);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.form-select:focus {
+  outline: none;
+  border-color: var(--color-primario);
+  box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+}
+
+.form-select:disabled {
+  background: #f5f5f5;
+  cursor: not-allowed;
+}
+
+/* Estilos para información de cuentas */
+.cuentas-info {
+  margin-bottom: 24px;
+}
+
+.info-box {
+  background: #fff3e0;
+  border: 1px solid #ff9800;
+  border-radius: var(--border-radius);
+  padding: 16px;
+}
+
+.info-box h4 {
+  color: #e65100;
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.info-box ul {
+  margin: 0;
+  padding-left: 20px;
+  color: #bf360c;
+}
+
+.info-box li {
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+.info-box strong {
+  color: #d84315;
+}
+
+.form-section h3 {
+  color: var(--color-texto);
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.section-description {
+  color: var(--color-texto-secundario);
+  font-size: 14px;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group:last-child {
+  margin-bottom: 0;
+}
+
+.form-group label {
+  display: block;
+  color: var(--color-texto);
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 18px 24px;
+  border: 2px solid var(--color-borde);
+  border-radius: 10px;
+  font-size: 17px;
+  min-height: 56px;
+  min-width: 0;
+  color: var(--color-texto);
+  background: var(--color-blanco);
+  transition: var(--transition);
+  box-sizing: border-box;
+}
+
+/* Responsive Form Inputs */
+@media (max-width: 768px) {
+  .form-group input {
+    padding: 14px 18px;
+    font-size: 16px;
+    min-height: 48px;
+  }
+  
+  .form-group label {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .form-group input {
+    padding: 12px 16px;
+    font-size: 16px;
+    min-height: 44px;
+    border-radius: 8px;
+  }
+  
+  .form-group label {
+    font-size: 12px;
+    margin-bottom: 6px;
+  }
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--color-principal);
+  box-shadow: 0 0 0 3px var(--color-principal-bg);
+}
+
+.form-group input:disabled {
+  background: var(--color-fondo);
+  color: var(--color-texto-secundario);
+  cursor: not-allowed;
+}
+
+.disabled-field {
+  background-color: #f5f5f5 !important;
+  color: #666 !important;
+  cursor: not-allowed !important;
+  border-color: #ddd !important;
+}
+
+.field-help {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: #666;
+  font-style: italic;
+}
+
+.disabled-field {
+  background-color: #f5f5f5 !important;
+  color: #666 !important;
+  border-color: #ddd !important;
+  cursor: not-allowed !important;
+}
+
+.form-group input::placeholder {
+  color: var(--color-texto-secundario);
+  opacity: 0.7;
+}
+
+.field-help {
+  display: block;
+  color: var(--color-texto-secundario);
+  font-size: 12px;
+  margin-top: 6px;
+  font-style: italic;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: center;
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--color-borde);
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 14px 32px;
+  border-radius: var(--border-radius);
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  border: none;
+  cursor: pointer;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 160px;
+  justify-content: center;
+}
+
+/* Responsive Buttons */
+@media (max-width: 768px) {
+  .form-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .btn {
+    width: 100%;
+    min-width: auto;
+    padding: 12px 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .form-actions {
+    padding-top: var(--spacing-sm);
+  }
+  
+  .btn {
+    padding: 12px 20px;
+    font-size: 13px;
+  }
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--color-principal) 0%, var(--color-principal-dark) 100%);
+  color: var(--color-blanco);
+  box-shadow: 0 4px 15px var(--color-sombra-principal);
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px var(--color-sombra-principal);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Estilos para comprobantes */
+.comprobante-item {
+  background: var(--color-blanco);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--border-radius);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.comprobante-header {
+  margin-bottom: 12px;
+}
+
+.comprobante-config {
+  padding-left: 24px;
+}
+
+/* Contenedor horizontal para los 3 tipos de comprobantes */
+.comprobantes-horizontal-container {
+  display: flex;
+  gap: 20px;
+  margin-top: 20px;
+  flex-wrap: wrap; /* Para responsive */
+}
+
+.comprobantes-horizontal-container .comprobante-item {
+  flex: 1;
+  min-width: 200px; /* Ancho mínimo para cada comprobante */
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 16px;
+  transition: all 0.3s ease;
+}
+
+.comprobantes-horizontal-container .comprobante-item:hover {
+  border-color: var(--color-principal);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.comprobantes-horizontal-container .comprobante-header {
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.comprobantes-horizontal-container .comprobante-header label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-texto);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.comprobantes-horizontal-container .comprobante-config {
+  padding-left: 0; /* Resetear padding para layout horizontal */
+}
+
+.comprobantes-horizontal-container .form-group {
+  margin-bottom: 8px;
+}
+
+.comprobantes-horizontal-container .form-group label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-secundario);
+  margin-bottom: 4px;
+  display: block;
+}
+
+.comprobantes-horizontal-container .codigo-input {
+  width: 100% !important;
+  min-width: auto !important;
+  max-width: none !important;
+  text-align: center;
+}
+
+.comprobantes-horizontal-container .field-help {
+  font-size: 11px;
+  color: var(--color-secundario);
+  margin-top: 4px;
+  display: block;
+  text-align: center;
+}
+
+.codigo-input {
+  min-width: 120px; /* Más compacto para 8 dígitos */
+  max-width: 140px; /* Control del ancho máximo */
+  text-align: center;
+  font-family: 'Courier New', monospace;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  background-color: #f8f9fa !important;
+  color: #2d3748 !important;
+  padding: 10px 12px !important;
+  font-size: 14px !important;
+  min-height: 38px !important;
+  border: 1px solid var(--color-borde) !important;
+  border-radius: 6px !important;
+}
+
+.naturaleza-select {
+  background: var(--color-blanco);
+  border: 2px solid var(--color-borde);
+  border-radius: 10px;
+  padding: 18px 24px;
+  font-size: 17px;
+  min-height: 56px;
+  width: 100%;
+  min-width: 180px;
+  color: var(--color-texto);
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+.naturaleza-select:focus {
+  outline: none;
+  border-color: var(--color-principal);
+  box-shadow: 0 0 0 3px var(--color-sombra-principal);
+}
+
+.naturaleza-select:disabled {
+  background: var(--color-fondo);
+  color: var(--color-texto-secundario);
+  cursor: not-allowed;
+}
+
+/* Estilos específicos para campos de nombre más amplios */
+.cuenta-fields .form-group:nth-child(2) input {
+  min-width: 250px; /* Campo de nombre más ancho */
+}
+
+/* Estilos específicos para el campo de naturaleza */
+.cuenta-fields .form-group:nth-child(3) {
+  min-width: 180px; /* Columna de naturaleza más ancha */
+}
+
+/* Estilos para registro de cuentas */
+.cuentas-grid {
+  display: grid;
+  grid-template-columns: 1fr; /* Una sola tarjeta por fila para máximo ancho */
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.cuenta-item {
+  background: var(--color-blanco);
+  border: 2px solid var(--color-borde);
+  border-radius: 8px;
+  padding: 20px 24px;
+  transition: var(--transition);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  min-width: 500px; /* Más compacto pero funcional */
+}
+
+.cuenta-item:hover {
+  border-color: var(--color-principal);
+  box-shadow: 0 2px 8px var(--color-sombra);
+}
+
+.cuenta-header {
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.cuenta-fields {
+  display: grid;
+  grid-template-columns: 1.5fr 4.5fr 1.5fr; /* Naturaleza más pequeño */
+  gap: 16px;
+  align-items: end;
+  margin-top: 12px;
+}
+
+.cuenta-fields .form-group {
+  margin-bottom: 0;
+}
+
+/* Checkbox personalizado */
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--color-texto);
+}
+
+.checkbox-label input[type="checkbox"] {
+  display: none; /* Ocultar el checkbox nativo */
+}
+
+.checkmark {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--color-borde);
+  border-radius: 3px;
+  position: relative;
+  transition: var(--transition);
+}
+
+.checkbox-label input[type="checkbox"]:checked + .checkmark {
+  background: var(--color-principal);
+  border-color: var(--color-principal);
+}
+
+.checkbox-label input[type="checkbox"]:checked + .checkmark::after {
+  content: '✓';
+  position: absolute;
+  top: -2px;
+  left: 2px;
+  color: var(--color-blanco);
+  font-size: 12px;
+  font-weight: bold;
+}
+
+/* Estilos compactos y efectivos para cada campo */
+.cuenta-fields .form-group input,
+.cuenta-fields .form-group select {
+  /* Estilos base compactos para todos los inputs de cuentas */
+  padding: 10px 12px !important;
+  border: 1px solid var(--color-borde) !important;
+  border-radius: 6px !important;
+  font-size: 14px !important;
+  min-height: 38px !important;
+  background: var(--color-blanco);
+  transition: var(--transition);
+}
+
+.cuenta-fields .form-group:nth-child(3) select {
+  /* Select de naturaleza más compacto */
+  padding: 10px 8px !important;
+  font-size: 13px !important;
+}
+
+.cuenta-fields .form-group:nth-child(1) input {
+  /* Campo Código - 8 dígitos numéricos */
+  min-width: 120px;
+  max-width: 140px;
+}
+
+.cuenta-fields .form-group:nth-child(2) input {
+  /* Campo Nombre - espacio optimizado */
+  min-width: 200px;
+}
+
+.cuenta-fields .form-group:nth-child(3) select {
+  /* Campo Naturaleza - ancho controlado y compacto */
+  min-width: 110px;
+  max-width: 130px;
+  cursor: pointer;
+}
+
+.cuenta-fields .form-group input:focus,
+.cuenta-fields .form-group select:focus {
+  border-color: var(--color-principal);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+/* Labels más compactos */
+.cuenta-fields .form-group label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-secundario);
+  margin-bottom: 4px;
+  display: block;
+}
+
+/* Responsive mejorado - Tablet */
+@media (max-width: 1024px) {
+  .form-section {
+    padding: var(--spacing-md);
+  }
+  
+  .form-header h2 {
+    font-size: 24px;
+  }
+  
+  .cuentas-contables-container {
+    flex-direction: column;
+    gap: var(--spacing-lg);
+  }
+  
+  .cuentas-contables-container .grupo-ventas,
+  .cuentas-contables-container .grupo-compras {
+    max-width: 100%;
+    min-width: 0;
+  }
+  
+  .cuenta-item {
+    min-width: 0;
+    padding: var(--spacing-md);
+  }
+  
+  .cuenta-fields {
+    grid-template-columns: 1fr 2fr 1fr;
+    gap: var(--spacing-sm);
+  }
+}
+
+/* Responsive - Mobile */
+@media (max-width: 768px) {
+  .crear-empresa-container {
+    padding: var(--spacing-sm);
+  }
+  
+  .form-section {
+    padding: var(--spacing-sm);
+    border-radius: 8px;
+  }
+  
+  .form-header {
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-sm);
+  }
+  
+  .form-header h2 {
+    font-size: 20px;
+  }
+  
+  .form-header p {
+    font-size: 14px;
+  }
+  
+  .empresa-form {
+    gap: var(--spacing-md);
+  }
+  
+  .cuentas-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-sm);
+  }
+  
+  .cuenta-fields {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-sm);
+  }
+  
+  .cuenta-item {
+    padding: var(--spacing-sm);
+    min-width: 0;
+  }
+  
+  .cuenta-fields .form-group:nth-child(1) input,
+  .cuenta-fields .form-group:nth-child(2) input,
+  .cuenta-fields .form-group:nth-child(3) select {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+  
+  .codigo-input {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+  
+  .comprobantes-horizontal-container {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .comprobantes-horizontal-container .comprobante-item {
+    min-width: 0;
+    width: 100%;
+  }
+  
+  .grupo-ventas,
+  .grupo-compras {
+    padding: var(--spacing-md);
+  }
+  
+  .grupo-titulo {
+    font-size: 1.1rem;
+  }
+  
+  .section-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-sm);
+  }
+  
+  .btn-copy {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Responsive - Mobile pequeño */
+@media (max-width: 480px) {
+  .crear-empresa-container {
+    padding: var(--spacing-xs);
+  }
+  
+  .form-section {
+    padding: var(--spacing-xs);
+  }
+  
+  .form-header h2 {
+    font-size: 18px;
+  }
+  
+  .form-header p {
+    font-size: 13px;
+  }
+  
+  .cuenta-item {
+    padding: var(--spacing-xs);
+  }
+  
+  .cuenta-header-descriptiva {
+    padding: var(--spacing-sm);
+  }
+  
+  .cuenta-header-layout {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-xs);
+  }
+  
+  .checkbox-wrapper {
+    justify-content: flex-start;
+  }
+  
+  .grupo-ventas,
+  .grupo-compras {
+    padding: var(--spacing-sm);
+  }
+  
+  .grupo-titulo {
+    font-size: 1rem;
+  }
+  
+  .section-header h3 {
+    font-size: 1rem;
+  }
+}
+
+/* Responsive para pantallas medianas */
+@media (min-width: 769px) and (max-width: 1200px) {
+  .cuentas-grid {
+    grid-template-columns: 1fr; /* Una tarjeta por fila también en medianas */
+    gap: 20px;
+  }
+  
+  .cuenta-fields {
+    grid-template-columns: 1.6fr 4fr 2fr;
+    gap: 24px;
+  }
+  
+  .cuenta-item {
+    padding: 28px 32px;
+  }
+}
+
+/* ===== ESTILOS PARA NUEVA ESTRUCTURA DE VENTAS ===== */
+
+/* Contenedor principal para cuentas contables lado a lado */
+.cuentas-contables-container {
+  display: flex;
+  gap: 4rem;
+  margin-bottom: 3rem;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.cuentas-contables-container .grupo-ventas,
+.cuentas-contables-container .grupo-compras {
+  flex: 1;
+  max-width: 49%; /* Máximo ancho para acomodar tarjetas más grandes */
+  min-width: 480px; /* Ancho mínimo optimizado para diseño compacto */
+}
+
+/* Estilos para grupo de ventas */
+.grupo-ventas {
+  background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+  border: 1px solid #10b981;
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.08);
+}
+
+/* Estilos para grupo de compras */
+.grupo-compras {
+  background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+  border: 1px solid #10b981;
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.08);
+}
+
+/* Títulos principales de grupos (h2) */
+.grupo-titulo {
+  color: #059669;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #10b981;
+}
+
+/* Descripciones de grupos (p) */
+.grupo-descripcion {
+  color: #4a5568;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  padding: 0 1rem;
+}
+
+
+/* Estilos para secciones de ventas específicas */
+.ventas-section {
+  background: white;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  margin-bottom: 1.5rem;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.section-header h3 {
+  margin: 0;
+  color: #374151;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+/* Botón de copiar configuración - Solo desde Factura Venta a Nota Crédito */
+.btn-copy {
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-transform: none;
+  white-space: nowrap;
+}
+
+/* Botón: Copiar desde Factura de Venta (aparece en sección Nota Crédito) */
+.btn-copy-from-factura {
+  background: linear-gradient(135deg, #10b981, #059669);
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+}
+
+.btn-copy-from-factura:hover:not(:disabled) {
+  background: linear-gradient(135deg, #059669, #047857);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+/* Estado deshabilitado */
+.btn-copy:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Botón: Copiar desde Factura de Compra (aparece en sección Nota Crédito de Compra) */
+.btn-copy-from-factura-compra {
+  background: linear-gradient(135deg, #10b981, #059669);
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+}
+
+.btn-copy-from-factura-compra:hover:not(:disabled) {
+  background: linear-gradient(135deg, #059669, #047857);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+.btn-copy-from-factura-compra:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Estilos específicos para secciones de compras */
+.compras-section {
+  background: rgba(16, 185, 129, 0.05);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.compras-section .section-header h3 {
+  color: #059669;
+}
+
+.compras-section .cuenta-item {
+  border-left: 3px solid #10b981;
+}
+
+/* Mejorar responsive para nueva estructura */
+@media (min-width: 1200px) {
+  /* En pantallas grandes, equilibrar separación y ancho */
+  .cuentas-contables-container {
+    gap: 3rem;
+  }
+  
+  .cuentas-contables-container .grupo-ventas,
+  .cuentas-contables-container .grupo-compras {
+    max-width: 48.5%; /* Mayor ancho en pantallas grandes */
+  }
+  
+  /* Optimizar campos para pantallas grandes */
+  .cuenta-fields .form-group:nth-child(1) input {
+    min-width: 130px;
+    max-width: 150px;
+  }
+  
+  .cuenta-fields .form-group:nth-child(2) input {
+    min-width: 220px;
+  }
+  
+  .cuenta-fields .form-group:nth-child(3) select {
+    min-width: 120px;
+    max-width: 140px;
+  }
+}
+
+@media (min-width: 1600px) {
+  /* En pantallas extra grandes, máximo aprovechamiento */
+  .cuentas-contables-container {
+    gap: 2rem;
+  }
+  
+  .cuentas-contables-container .grupo-ventas,
+  .cuentas-contables-container .grupo-compras {
+    max-width: 49%; /* Máximo ancho posible */
+  }
+  
+  /* Máximo espacio para campos en pantallas extra grandes */
+  .cuenta-fields .form-group:nth-child(1) input {
+    min-width: 140px;
+    max-width: 160px;
+  }
+  
+  .cuenta-fields .form-group:nth-child(2) input {
+    min-width: 240px;
+  }
+  
+  .cuenta-fields .form-group:nth-child(3) select {
+    min-width: 130px;
+    max-width: 150px;
+  }
+}
+
+@media (max-width: 1024px) {
+  /* En pantallas medianas y pequeñas, hacer que las secciones se apilen verticalmente */
+  .cuentas-contables-container {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .cuentas-contables-container .grupo-ventas,
+  .cuentas-contables-container .grupo-compras {
+    max-width: 100%; /* Restaurar ancho completo en móvil */
+    min-width: 0; /* Permitir reducción en móvil */
+  }
+  
+  .crear-empresa-container {
+    max-width: 100%; /* Ancho completo en pantallas pequeñas */
+    padding: 20px; /* Reducir padding en móvil */
+  }
+  
+  .cuenta-item {
+    min-width: 0; /* Permitir reducción de tarjetas en móvil */
+    padding: 24px 20px; /* Reducir padding en móvil */
+  }
+  
+  /* Comprobantes apilados en móvil */
+  .comprobantes-horizontal-container {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .comprobantes-horizontal-container .comprobante-item {
+    min-width: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .grupo-ventas,
+  .grupo-compras {
+    padding: 1.5rem;
+  }
+  
+  .grupo-titulo {
+    font-size: 1.3rem;
+  }
+  
+  .cuenta-fields {
+    grid-template-columns: 1fr; /* En móvil, apilar verticalmente */
+    gap: 16px;
+  }
+  
+  .cuenta-fields .form-group:nth-child(2) input {
+    min-width: 200px; /* Reducir en móvil */
+  }
+  
+  .grupo-descripcion {
+    font-size: 0.9rem;
+    padding: 0.75rem;
+  }
+  
+  .section-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .section-header h3 {
+    text-align: center;
+    margin-bottom: 0.5rem;
+  }
+  
+  .btn-copy {
+    justify-content: center;
+    width: 100%;
+  }
+}
+
+/* Estilos para la sección de importación Excel */
+.excel-import-section {
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 20px 0;
+}
+
+.excel-import-section h4 {
+  color: #495057;
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+}
+
+.import-description {
+  color: #6c757d;
+  font-size: 0.9rem;
+  margin-bottom: 15px;
+  line-height: 1.4;
+}
+
+/* Estilos para etiquetas de cuentas */
+.cuenta-label {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.cuenta-numero {
+  font-weight: 600;
+  color: var(--color-texto);
+  font-size: 14px;
+}
+
+.cuenta-tipo {
+  font-size: 11px;
+  color: var(--color-texto-secundario);
+  font-weight: 500;
+  background: var(--color-fondo-secundario);
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--color-borde);
+  max-width: 200px;
+  word-wrap: break-word;
+}
+
+/* Colores específicos para cada tipo de cuenta */
+.cuenta-item:nth-child(1) .cuenta-tipo {
+  background: #e8f5e8;
+  color: #2d5a2d;
+  border-color: #4caf50;
+}
+
+.cuenta-item:nth-child(2) .cuenta-tipo {
+  background: #fff3e0;
+  color: #e65100;
+  border-color: #ff9800;
+}
+
+.cuenta-item:nth-child(3) .cuenta-tipo {
+  background: #e3f2fd;
+  color: #1565c0;
+  border-color: #2196f3;
+}
+
+.cuenta-item:nth-child(4) .cuenta-tipo {
+  background: #fce4ec;
+  color: #c2185b;
+  border-color: #e91e63;
+}
+
+.import-buttons {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.file-upload-container {
+  position: relative;
+}
+
+.file-upload-label {
+  cursor: pointer;
+  display: inline-block;
+  text-decoration: none;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.file-upload-label.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.file-message {
+  margin-top: 15px;
+  padding: 10px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.file-message.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.file-message.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.file-message.info {
+  background-color: #cce7ff;
+  color: #004085;
+  border: 1px solid #b3d7ff;
+}
+
+/* Estilos para estado de cuentas */
+.estado-cuentas {
+  background-color: #e8f5e8;
+  border: 1px solid #c3e6c3;
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 15px;
+}
+
+.estado-info {
+  color: #2d5a2d;
+  font-size: 0.95rem;
+}
+
+.fecha-actualizacion {
+  font-weight: normal;
+  color: #666;
+  font-size: 0.85rem;
+  margin-left: 8px;
+}
+
+/* Estilos para confirmación de importación */
+.confirmacion-importacion {
+  background-color: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 6px;
+  padding: 15px;
+  margin-top: 15px;
+}
+
+.confirmacion-mensaje {
+  margin-bottom: 15px;
+}
+
+.confirmacion-mensaje p {
+  margin: 5px 0;
+  color: #856404;
+}
+
+.confirmacion-botones {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-start;
+}
+
+.confirmacion-botones .btn {
+  padding: 8px 16px;
+  font-size: 0.9rem;
+}
+
+.file-message.warning {
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeaa7;
+}
+
+/* Estilos para la sección de limpieza de cuentas */
+.cleanup-section {
+  margin-top: 20px;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.cleanup-section .btn-danger {
+  background-color: #dc3545;
+  border-color: #dc3545;
+  color: white;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.cleanup-section .btn-danger:hover {
+  background-color: #c82333;
+  border-color: #bd2130;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+}
+
+.cleanup-section .btn-danger:disabled {
+  background-color: #6c757d;
+  border-color: #6c757d;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.cleanup-warning {
+  margin-top: 12px;
+  color: #dc3545;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 0;
+}
+
+/* Estilos para la información de cuentas contables */
+.cuentas-info-section {
+  margin-top: 30px;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+}
+
+.cuentas-info-section h4 {
+  color: #495057;
+  margin-bottom: 20px;
+  font-size: 18px;
+}
+
+.cuentas-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.cuenta-info-item {
+  background: white;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  border-left: 4px solid #6c757d;
+}
+
+.cuenta-info-item.obligatoria {
+  border-left-color: #dc3545;
+}
+
+.cuenta-info-item.opcional {
+  border-left-color: #ffc107;
+}
+
+.cuenta-info-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+}
+
+.cuenta-numero {
+  font-size: 24px;
+}
+
+.cuenta-titulo {
+  font-weight: bold;
+  font-size: 16px;
+  color: #495057;
+}
+
+.cuenta-obligatoria {
+  background-color: #dc3545;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.cuenta-opcional {
+  background-color: #ffc107;
+  color: #212529;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.cuenta-info-descripcion p {
+  margin: 8px 0;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.cuenta-info-descripcion strong {
+  color: #495057;
+}
+
+/* Botón para agregar cuentas progresivamente */
+.btn-add-cuenta {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  margin-top: 1rem;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+  font-size: 1rem;
+}
+
+.btn-add-cuenta:hover:not(:disabled) {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+.btn-add-cuenta:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Contador de cuentas configuradas */
+.cuentas-counter {
+  font-weight: 600;
+  color: #0369a1;
+  background: rgba(3, 105, 161, 0.1);
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  margin-left: 0.5rem;
+}
+
+/* Header descriptivo de cuenta con tipo y descripción */
+.cuenta-header-descriptiva {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  padding: 1.25rem;
+  border-radius: 10px;
+  margin-bottom: 1.25rem;
+  border: 2px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.cuenta-header-layout {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1rem;
+  align-items: start;
+  width: 100%;
+}
+
+.checkbox-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin-top: 0.25rem;
+  cursor: pointer;
+}
+
+.checkbox-wrapper input[type="checkbox"] {
+  display: none;
+}
+
+.checkbox-wrapper .checkmark {
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  border: 2px solid #cbd5e1;
+  border-radius: 6px;
+  position: relative;
+  transition: all 0.2s ease;
+  background: white;
+  cursor: pointer;
+}
+
+.checkbox-wrapper input[type="checkbox"]:checked + .checkmark {
+  background: linear-gradient(135deg, var(--color-principal) 0%, var(--color-principal-dark) 100%);
+  border-color: var(--color-principal);
+}
+
+.checkbox-wrapper input[type="checkbox"]:checked + .checkmark::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.checkbox-wrapper input[type="checkbox"]:disabled + .checkmark {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.checkbox-wrapper:hover .checkmark {
+  border-color: var(--color-principal);
+  box-shadow: 0 0 0 3px rgba(255, 25, 62, 0.1);
+}
+
+.cuenta-info-derecha {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.cuenta-titulo-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.cuenta-numero-label {
+  font-weight: 700;
+  color: #1e293b;
+  font-size: 1.05rem;
+}
+
+.cuenta-tipo-badge {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+  padding: 0.35rem 1rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.4);
+}
+
+.badge-obligatoria {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  padding: 0.3rem 0.65rem;
+  border-radius: 14px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  box-shadow: 0 2px 6px rgba(239, 68, 68, 0.4);
+  margin-left: auto;
+}
+
+.cuenta-ayuda {
+  color: #64748b;
+  font-size: 0.875rem;
+  margin: 0;
+  line-height: 1.5;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cuenta-ayuda::before {
+  content: "💡";
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+/* Estilos diferentes para cuentas obligatorias y opcionales */
+.cuenta-item.obligatoria {
+  border-left: 5px solid #ef4444;
+  background: rgba(239, 68, 68, 0.02);
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.08);
+}
+
+.cuenta-item.obligatoria .cuenta-header-descriptiva {
+  border-color: #fca5a5;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+}
+
+.cuenta-item.obligatoria:hover {
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
+}
+
+.cuenta-item.opcional {
+  border-left: 5px solid #10b981;
+  background: rgba(16, 185, 129, 0.02);
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.08);
+}
+
+.cuenta-item.opcional .cuenta-header-descriptiva {
+  border-color: #6ee7b7;
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+}
+
+.cuenta-item.opcional:hover {
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
+}

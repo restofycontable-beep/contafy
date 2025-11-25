@@ -1,0 +1,106 @@
+/* Estado vacío */
+.empty-state {
+  text-align: center;
+  margin-top: 4rem;
+  color: var(--color-texto-secundario);
+  padding: 3rem;
+  background: var(--color-blanco);
+  border-radius: 1.5rem;
+  box-shadow: 0 4px 20px var(--color-sombra);
+  border: 1px solid var(--color-borde);
+}
+
+.empty-state-icon {
+  font-size: 4rem;
+  margin-bottom: 1.5rem;
+  display: block;
+  opacity: 0.6;
+}
+
+/* Títulos y acentos */
+.header-title, .empty-state-title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #181A1B;
+  letter-spacing: 1px;
+  border-left: 7px solid var(--color-principal);
+  padding-left: 0.7rem;
+  margin-bottom: 0.5rem;
+}
+
+.empty-state-title { 
+  border-left: 7px solid var(--color-exito); 
+}
+
+.empty-state-description {
+  font-size: 1.125rem;
+  margin-bottom: 2rem;
+  color: var(--color-texto-secundario);
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.7;
+}
+
+.empty-state-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.empty-state-btn {
+  background: linear-gradient(135deg, var(--color-principal), var(--color-principal-dark));
+  color: var(--color-blanco);
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+}
+
+.empty-state-btn:hover {
+  background: linear-gradient(135deg, var(--color-principal-dark), var(--color-principal));
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 25, 62, 0.18);
+}
+
+.empty-state-btn-secondary {
+  background: var(--color-blanco);
+  color: var(--color-principal);
+  padding: 1rem 2rem;
+  border: 2px solid var(--color-principal);
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+}
+
+.empty-state-btn-secondary:hover {
+  background: #fff1f3;
+  border-color: var(--color-principal-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .empty-state {
+    padding: 2rem 1rem;
+    margin-top: 2rem;
+  }
+  
+  .empty-state-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .empty-state-btn,
+  .empty-state-btn-secondary {
+    width: 100%;
+    max-width: 300px;
+  }
+} 

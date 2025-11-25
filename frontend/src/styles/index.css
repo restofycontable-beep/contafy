@@ -1,0 +1,9 @@
+/* Importar todos los estilos separados */
+@import './responsive.css';
+@import './base.css';
+@import './sidebar.css';
+@import './header.css';
+@import './buttons.css';
+@import './main-panel.css';
+@import './empty-state.css';
+@import './modal-dian.css'; 

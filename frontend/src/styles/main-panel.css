@@ -1,0 +1,305 @@
+/* Panel principal */
+.main-panel {
+  flex: 1;
+  background: var(--color-fondo);
+  padding: 100px 32px 32px 32px; /* Agregado padding-top para el header fijo */
+  overflow-y: auto;
+  min-height: calc(100vh - 80px);
+  box-sizing: border-box;
+}
+
+/* Tarjetas de estadísticas modernas */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.stat-card {
+  background: var(--color-blanco);
+  border-radius: var(--border-radius);
+  padding: 24px;
+  box-shadow: 0 4px 20px var(--color-sombra);
+  border: 1px solid var(--color-borde);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(135deg, var(--color-principal) 0%, var(--color-principal-dark) 100%);
+}
+
+.stat-card:nth-child(2)::before { 
+  background: linear-gradient(135deg, var(--color-exito) 0%, var(--color-exito-dark) 100%);
+}
+
+.stat-card:nth-child(3)::before { 
+  background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+}
+
+.stat-card:nth-child(4)::before { 
+  background: linear-gradient(135deg, var(--color-principal) 0%, var(--color-principal-dark) 100%);
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+.stat-icon {
+  font-size: 2rem;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--color-principal) 0%, var(--color-principal-dark) 100%);
+  border-radius: var(--border-radius);
+  color: var(--color-blanco);
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px var(--color-sombra-principal);
+}
+
+.stat-card:nth-child(2) .stat-icon { 
+  background: linear-gradient(135deg, var(--color-exito) 0%, var(--color-exito-dark) 100%);
+  box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3);
+}
+
+.stat-card:nth-child(3) .stat-icon { 
+  background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+  box-shadow: 0 4px 12px rgba(237, 137, 54, 0.3);
+}
+
+.stat-card:nth-child(4) .stat-icon { 
+  background: linear-gradient(135deg, var(--color-principal) 0%, var(--color-principal-dark) 100%);
+  box-shadow: 0 4px 12px var(--color-sombra-principal);
+}
+
+.stat-content {
+  flex: 1;
+}
+
+.stat-number {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--color-texto);
+  margin-bottom: 4px;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: var(--color-texto-secundario);
+  font-weight: 500;
+}
+
+/* Estado vacío mejorado */
+.empty-state {
+  background: var(--color-blanco);
+  border-radius: var(--border-radius);
+  padding: 48px 32px;
+  text-align: center;
+  box-shadow: 0 4px 20px var(--color-sombra);
+  border: 1px solid var(--color-borde);
+  margin-top: 24px;
+}
+
+.empty-state-icon {
+  font-size: 4rem;
+  margin-bottom: 24px;
+  opacity: 0.6;
+}
+
+.empty-state-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-texto);
+  margin-bottom: 12px;
+}
+
+.empty-state-description {
+  font-size: 16px;
+  color: var(--color-texto-secundario);
+  margin-bottom: 32px;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.6;
+}
+
+.empty-state-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.empty-state-btn {
+  background: linear-gradient(135deg, var(--color-principal) 0%, var(--color-principal-dark) 100%);
+  color: var(--color-blanco);
+  border: none;
+  padding: 12px 24px;
+  border-radius: var(--border-radius);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  font-size: 14px;
+  box-shadow: 0 4px 12px var(--color-sombra-principal);
+}
+
+.empty-state-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px var(--color-sombra-principal);
+}
+
+.empty-state-btn-secondary {
+  background: var(--color-fondo);
+  color: var(--color-texto-secundario);
+  border: 1px solid var(--color-borde);
+  padding: 12px 24px;
+  border-radius: var(--border-radius);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  font-size: 14px;
+}
+
+.empty-state-btn-secondary:hover {
+  background: var(--color-blanco);
+  color: var(--color-texto);
+  border-color: var(--color-principal);
+  transform: translateY(-2px);
+}
+
+/* Responsive - Tablet */
+@media (max-width: 1024px) {
+  .main-panel {
+    padding: 90px var(--spacing-md) var(--spacing-md) var(--spacing-md);
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-md);
+  }
+}
+
+/* Responsive - Mobile */
+@media (max-width: 768px) {
+  .main-panel {
+    padding: 80px var(--spacing-sm) var(--spacing-sm) var(--spacing-sm);
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+  }
+  
+  .stat-card {
+    padding: var(--spacing-md);
+    gap: var(--spacing-sm);
+  }
+  
+  .stat-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 1.5rem;
+  }
+  
+  .stat-number {
+    font-size: 1.5rem;
+  }
+  
+  .stat-label {
+    font-size: 13px;
+  }
+  
+  .empty-state {
+    padding: var(--spacing-lg) var(--spacing-md);
+    margin-top: var(--spacing-sm);
+    border-radius: 12px;
+  }
+  
+  .empty-state-icon {
+    font-size: 3rem;
+    margin-bottom: var(--spacing-sm);
+  }
+  
+  .empty-state-title {
+    font-size: 1.25rem;
+    margin-bottom: var(--spacing-xs);
+  }
+  
+  .empty-state-description {
+    font-size: 14px;
+    margin-bottom: var(--spacing-md);
+  }
+  
+  .empty-state-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-sm);
+  }
+  
+  .empty-state-btn,
+  .empty-state-btn-secondary {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+/* Responsive - Mobile pequeño */
+@media (max-width: 480px) {
+  .main-panel {
+    padding: 70px var(--spacing-xs) var(--spacing-xs) var(--spacing-xs);
+  }
+  
+  .stats-grid {
+    gap: var(--spacing-xs);
+  }
+  
+  .stat-card {
+    padding: var(--spacing-sm);
+    gap: var(--spacing-xs);
+  }
+  
+  .stat-icon {
+    width: 45px;
+    height: 45px;
+    font-size: 1.25rem;
+  }
+  
+  .stat-number {
+    font-size: 1.35rem;
+  }
+  
+  .stat-label {
+    font-size: 12px;
+  }
+  
+  .empty-state {
+    padding: var(--spacing-md) var(--spacing-sm);
+  }
+  
+  .empty-state-icon {
+    font-size: 2.5rem;
+  }
+  
+  .empty-state-title {
+    font-size: 1.1rem;
+  }
+  
+  .empty-state-description {
+    font-size: 13px;
+  }
+} 

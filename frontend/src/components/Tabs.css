@@ -1,0 +1,143 @@
+.tabs-container {
+  width: 100%;
+}
+
+.tabs-header {
+  display: flex;
+  gap: 8px;
+  border-bottom: 2px solid var(--color-borde);
+  margin-bottom: 2rem;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-borde) transparent;
+}
+
+.tabs-header::-webkit-scrollbar {
+  height: 6px;
+}
+
+.tabs-header::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.tabs-header::-webkit-scrollbar-thumb {
+  background: var(--color-borde);
+  border-radius: 3px;
+}
+
+.tab-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 24px;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: var(--color-texto-secundario);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  position: relative;
+  min-width: fit-content;
+}
+
+.tab-button:hover:not(:disabled) {
+  color: var(--color-principal);
+  background: rgba(255, 25, 62, 0.05);
+  border-bottom-color: rgba(255, 25, 62, 0.3);
+}
+
+.tab-button.active {
+  color: var(--color-principal);
+  border-bottom-color: var(--color-principal);
+  background: rgba(255, 25, 62, 0.08);
+}
+
+.tab-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.tab-icon {
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tab-label {
+  font-weight: 600;
+}
+
+.tab-badge {
+  background: var(--color-principal);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 12px;
+  margin-left: 4px;
+}
+
+.tab-button.active .tab-badge {
+  background: var(--color-principal-dark);
+}
+
+.tabs-content {
+  width: 100%;
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .tabs-header {
+    gap: 4px;
+    padding: 0 8px;
+  }
+  
+  .tab-button {
+    padding: 10px 12px;
+    font-size: 13px;
+    min-width: 50px;
+    justify-content: center;
+  }
+  
+  .tab-icon {
+    font-size: 16px;
+  }
+  
+  .tab-label {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .tabs-header {
+    gap: 2px;
+    padding: 0 4px;
+  }
+  
+  .tab-button {
+    padding: 8px 10px;
+    font-size: 12px;
+    min-width: 45px;
+  }
+  
+  .tab-icon {
+    font-size: 14px;
+  }
+}
+
