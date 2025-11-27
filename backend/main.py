@@ -5,8 +5,8 @@ from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from routes import auth_routes, procesamiento_routes, empresa_routes, zip_routes, ubicaciones_routes, admin_routes, restofy_routes
 from config.settings import settings
 import logging
+from datetime import datetime
 
-# Configurar logging estándar
 logging.basicConfig(
     level=getattr(logging, settings.LOG_LEVEL),
     format='%(asctime)s | %(levelname)s | %(name)s:%(funcName)s:%(lineno)d | %(message)s'
@@ -15,17 +15,10 @@ logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """
-    Maneja los eventos de inicio y cierre de la aplicación
-    """
-    # Evento de inicio
     logger.info(f"Iniciando {settings.APP_NAME} v{settings.APP_VERSION}")
     logger.info(f"Modo debug: {settings.DEBUG}")
     logger.info(f"Servidor corriendo en {settings.HOST}:{settings.PORT}")
-    
     yield
-    
-    # Evento de cierre
     logger.info(f"Cerrando {settings.APP_NAME}")
 
 app = FastAPI(
@@ -36,15 +29,10 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# Configuración de CORS usando settings
-# Procesar CORS_ORIGINS: si contiene "*", usar ["*"] para permitir todos los orígenes
-# FastAPI no soporta wildcards como "https://*.vercel.app", así que filtramos esos
 cors_origins = settings.CORS_ORIGINS
 if "*" in cors_origins:
-    # Si hay "*", usar solo ese para permitir todos los orígenes
     cors_origins = ["*"]
 else:
-    # Filtrar wildcards inválidos que FastAPI no soporta
     cors_origins = [origin for origin in cors_origins if "*" not in origin]
 
 logger.info(f"CORS Origins configurados: {cors_origins}")
@@ -57,13 +45,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Configuración para archivos grandes
 app.add_middleware(
     TrustedHostMiddleware,
-    allowed_hosts=["*"]  # En producción, especifica los hosts permitidos
+    allowed_hosts=["*"]
 )
 
-# Incluir rutas
 app.include_router(auth_routes.router, prefix="/api/auth", tags=["Autenticación"])
 app.include_router(procesamiento_routes.router, prefix="/api/procesamiento", tags=["Procesamiento"])
 app.include_router(empresa_routes.router, prefix="/api/empresas", tags=["Empresas"])
@@ -84,12 +70,11 @@ async def root():
 async def health_check():
     return {
         "status": "healthy",
-        "timestamp": "2025-08-20T14:08:11Z"
+        "timestamp": datetime.utcnow().isoformat() + "Z"
     }
 
 @app.get("/api/routes")
 async def list_routes():
-    """Endpoint para listar todas las rutas disponibles"""
     routes = []
     for route in app.routes:
         if hasattr(route, "methods") and hasattr(route, "path"):
@@ -102,14 +87,6 @@ async def list_routes():
         "total": len(routes)
     }
 
-@app.get("/test-cors")
-async def test_cors():
-    return {"message": "CORS working"}
-
-@app.post("/test-cors")
-async def test_cors_post():
-    return {"message": "CORS POST working"}
-
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(
@@ -118,7 +95,6 @@ if __name__ == "__main__":
         port=settings.PORT,
         reload=settings.DEBUG,
         log_level=settings.LOG_LEVEL.lower(),
-        # Configuración para archivos grandes
         limit_concurrency=1000,
         limit_max_requests=10000,
         timeout_keep_alive=30,
