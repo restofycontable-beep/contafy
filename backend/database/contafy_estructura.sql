@@ -518,14 +518,10 @@ ALTER SEQUENCE public.resumen_financiero_id_seq OWNED BY public.resumen_financie
 -- Name: tipos_cuentas_globales; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public.tipos_cuentas_globales (
-    id integer NOT NULL,
-    created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-    is_active boolean DEFAULT true,
-    nombre character varying(100) NOT NULL,
-    codigo_interno character varying(50),
-    orden integer DEFAULT 0
+CREATE TABLE tipos_cuentas_globales (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    empresa_id INTEGER NOT NULL REFERENCES empresas(id) ON DELETE CASCADE
 );
 
 
