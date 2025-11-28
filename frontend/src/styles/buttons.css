@@ -1,5 +1,5 @@
 /* Botones modernos uniformes */
-.btn, .modal-dian-btn {
+.btn {
   padding: 14px 28px;
   border: none;
   border-radius: 12px;
@@ -23,13 +23,13 @@
   margin-bottom: 0.2rem;
 }
 
-.btn-primary, .modal-dian-btn-juridica {
+.btn-primary {
   background: var(--color-principal);
   color: var(--color-blanco);
   box-shadow: 0 4px 24px rgba(255, 25, 62, 0.2);
 }
 
-.btn-primary:hover, .modal-dian-btn-juridica:hover {
+.btn-primary:hover {
   background: var(--color-principal-dark);
   color: var(--color-blanco);
   transform: translateY(-2px) scale(1.05);
@@ -65,7 +65,7 @@
 }
 
 /* Estados deshabilitados */
-.btn:disabled, .modal-dian-btn:disabled {
+.btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
   transform: none !important;

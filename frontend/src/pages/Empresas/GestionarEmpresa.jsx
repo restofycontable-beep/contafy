@@ -482,7 +482,6 @@ const GestionarEmpresa = ({ empresaId, onViewChange, onEmpresaLoaded }) => {
         </div>
       </div>
 
-      {/* Modal para procesar archivo DIAN */}
       <NuevoDocumentoModal
         isOpen={showModal}
         onClose={() => setShowModal(false)}

@@ -42,7 +42,6 @@ Componentes React organizados por funcionalidad:
 
 #### `/modals/` - Componentes Modales
 
-- `ModalDIAN.jsx` - Modal de consulta DIAN
 - `NuevoDocumentoModal.jsx` - Modal de nuevo documento
 
 #### `/ui/` - Componentes de Interfaz Reutilizables
@@ -63,7 +62,6 @@ Estilos CSS organizados por categoría:
 - `archivos-procesados-tabla.css` - Tabla de archivos
 - `ArchivosZipGenerados.css` - Archivos ZIP
 - `ListaEmpresas.css` - Lista de empresas
-- `modal-dian.css` - Modal DIAN
 - `modal-nuevo-documento.css` - Modal nuevo documento
 - `procesamiento.css` - Procesamiento
 
@@ -88,7 +86,6 @@ Contextos de React:
 Servicios y APIs:
 
 - `procesamientoService.js` - Servicio de procesamiento
-- `dianService.js` - Servicio de DIAN
 
 ### `/src/utils/`
 

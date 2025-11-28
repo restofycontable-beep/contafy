@@ -500,7 +500,7 @@
   box-shadow: 0 4px 12px var(--color-sombra);
 }
 
-/* Botón de importar archivo DIAN */
+/* Botón de importar archivo */
 .btn-importar-dian {
   background: linear-gradient(135deg, var(--color-principal) 0%, #0056b3 100%);
   color: var(--color-blanco);

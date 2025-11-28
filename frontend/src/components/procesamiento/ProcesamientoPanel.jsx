@@ -172,7 +172,6 @@ const ProcesamientoPanel = ({ documentos, onProcesarCompleto, empresaSeleccionad
         </div>
       )}
 
-      {/* Modal para procesar archivo DIAN */}
       <NuevoDocumentoModal
         isOpen={showModal}
         onClose={() => setShowModal(false)}

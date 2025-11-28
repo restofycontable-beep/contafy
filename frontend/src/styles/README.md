@@ -13,7 +13,6 @@ styles/
 ├── buttons.css        # Estilos de botones y componentes interactivos
 ├── main-panel.css     # Estilos del panel principal y tarjetas de estadísticas
 ├── empty-state.css    # Estilos para estados vacíos
-├── modal-dian.css     # Estilos específicos del modal DIAN
 └── README.md          # Esta documentación
 ```
 
