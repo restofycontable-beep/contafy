@@ -1,114 +1,183 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
+import ComprobanteService from '../../services/comprobanteService';
 
-const ComprobantesCompras = ({ formData, handleInputChange, loading }) => {
+const ComprobantesCompras = ({ empresaId, loading: parentLoading }) => {
+  const { token } = useAuth();
+  const [comprobantes, setComprobantes] = useState({
+    factura: { activo: false, codigo: '', id: null },
+    nota_credito: { activo: false, codigo: '', id: null },
+    nota_debito: { activo: false, codigo: '', id: null }
+  });
+  const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState({});
+
+  useEffect(() => {
+    if (empresaId && token) {
+      cargarComprobantes();
+    } else {
+      // Si no hay empresaId, inicializar con valores por defecto
+      setComprobantes({
+        factura: { activo: false, codigo: '01', id: null },
+        nota_credito: { activo: false, codigo: '91', id: null },
+        nota_debito: { activo: false, codigo: '92', id: null }
+      });
+    }
+  }, [empresaId, token]);
+
+  const cargarComprobantes = async () => {
+    if (!empresaId || !token) return;
+    
+    setLoading(true);
+    try {
+      const response = await ComprobanteService.getComprobantes(empresaId, 'compra', token);
+      if (response.success && response.data) {
+        const nuevosComprobantes = {
+          factura: { activo: false, codigo: '01', id: null },
+          nota_credito: { activo: false, codigo: '91', id: null },
+          nota_debito: { activo: false, codigo: '92', id: null }
+        };
+        
+        response.data.forEach(comp => {
+          if (nuevosComprobantes[comp.tipo_comprobante]) {
+            nuevosComprobantes[comp.tipo_comprobante] = {
+              activo: comp.activo,
+              codigo: comp.codigo || (comp.tipo_comprobante === 'factura' ? '01' : comp.tipo_comprobante === 'nota_credito' ? '91' : '92'),
+              id: comp.id
+            };
+          }
+        });
+        
+        setComprobantes(nuevosComprobantes);
+      }
+    } catch (error) {
+      console.error('Error cargando comprobantes:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const guardarComprobante = async (tipo, activo, codigo) => {
+    if (!empresaId || !token) {
+      // Si no hay empresaId, solo actualizar el estado local
+      return;
+    }
+    
+    setSaving(prev => ({ ...prev, [tipo]: true }));
+    
+    try {
+      if (comprobantes[tipo].id) {
+        // Actualizar existente
+        await ComprobanteService.updateComprobante(
+          comprobantes[tipo].id,
+          empresaId,
+          { activo, codigo },
+          token
+        );
+      } else {
+        // Crear nuevo
+        const response = await ComprobanteService.createComprobante(
+          empresaId,
+          {
+            tipo_comprobante: tipo,
+            categoria: 'compra',
+            codigo,
+            activo
+          },
+          token
+        );
+        if (response.success && response.data) {
+          setComprobantes(prev => ({
+            ...prev,
+            [tipo]: { ...prev[tipo], id: response.data.id }
+          }));
+        }
+      }
+    } catch (error) {
+      console.error('Error guardando comprobante:', error);
+    } finally {
+      setSaving(prev => ({ ...prev, [tipo]: false }));
+    }
+  };
+
+  const handleToggle = async (tipo) => {
+    const nuevoEstado = !comprobantes[tipo].activo;
+    const codigo = comprobantes[tipo].codigo || (tipo === 'factura' ? '01' : tipo === 'nota_credito' ? '91' : '92');
+    
+    setComprobantes(prev => ({
+      ...prev,
+      [tipo]: { ...prev[tipo], activo: nuevoEstado, codigo }
+    }));
+    
+    await guardarComprobante(tipo, nuevoEstado, codigo);
+  };
+
+  const handleCodigoChange = (tipo, codigo) => {
+    setComprobantes(prev => ({
+      ...prev,
+      [tipo]: { ...prev[tipo], codigo }
+    }));
+  };
+
+  const handleCodigoBlur = async (tipo) => {
+    const codigo = comprobantes[tipo].codigo || (tipo === 'factura' ? '01' : tipo === 'nota_credito' ? '91' : '92');
+    const activo = comprobantes[tipo].activo;
+    
+    setComprobantes(prev => ({
+      ...prev,
+      [tipo]: { ...prev[tipo], codigo }
+    }));
+    
+    if (activo || empresaId) {
+      await guardarComprobante(tipo, activo, codigo);
+    }
+  };
+
+  const tipos = [
+    { key: 'factura', label: 'Factura', icon: '📄', defaultCodigo: '01' },
+    { key: 'nota_credito', label: 'Nota Crédito', icon: '📋', defaultCodigo: '91' },
+    { key: 'nota_debito', label: 'Nota Débito', icon: '📝', defaultCodigo: '92' }
+  ];
+
   return (
-    <div className="form-section">
-      <h3>🛒 Tipos de Comprobantes de Compras</h3>
-      <p className="section-description">
-        Configura qué tipos de comprobantes procesar para documentos de compras y sus códigos específicos
-      </p>
-      
-      <div className="comprobantes-horizontal-container">
-        <div className="comprobante-item">
-          <div className="comprobante-header">
-            <label className="checkbox-label">
-              <input
-                type="checkbox"
-                name="configuracion_comprobantes_compras.factura.activo"
-                checked={formData.configuracion_comprobantes_compras?.factura?.activo || false}
-                onChange={handleInputChange}
-                disabled={loading}
-              />
-              <span className="checkmark"></span>
-              📄 Factura de Compra
-            </label>
-          </div>
-          <div className="comprobante-config">
-            <div className="form-group">
-              <label htmlFor="codigo_factura_compra">Código:</label>
-              <input
-                type="text"
-                id="codigo_factura_compra"
-                name="configuracion_comprobantes_compras.factura.codigo"
-                value={formData.configuracion_comprobantes_compras?.factura?.codigo || ''}
-                onChange={handleInputChange}
-                placeholder="01"
-                disabled={loading || !(formData.configuracion_comprobantes_compras?.factura?.activo || false)}
-                className="codigo-input"
-              />
-              <small className="field-help">
-                Código para facturas de compra
-              </small>
+    <div className="comprobantes-compras-container">
+      <div className="form-section comprobantes-compras-section">
+        <h3 className="section-title">Tipos de Comprobantes - Compras</h3>
+        <div className="comprobantes-grid">
+          {tipos.map(tipo => (
+            <div key={tipo.key} className="comprobante-card">
+              <div className="comprobante-header">
+                <label className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    checked={comprobantes[tipo.key]?.activo || false}
+                    onChange={() => handleToggle(tipo.key)}
+                    disabled={loading || parentLoading || saving[tipo.key]}
+                  />
+                  <span className="checkmark"></span>
+                  <span className="comprobante-label">
+                    {tipo.icon} {tipo.label}
+                  </span>
+                </label>
+              </div>
+              <div className="comprobante-config">
+                <div className="form-group">
+                  <label className="input-label">Código</label>
+                  <input
+                    type="text"
+                    value={comprobantes[tipo.key]?.codigo || ''}
+                    onChange={(e) => handleCodigoChange(tipo.key, e.target.value)}
+                    onBlur={() => handleCodigoBlur(tipo.key)}
+                    placeholder={tipo.defaultCodigo}
+                    disabled={loading || parentLoading || saving[tipo.key]}
+                    className="codigo-input"
+                    maxLength="3"
+                  />
+                  {saving[tipo.key] && <span className="saving-indicator">💾</span>}
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-
-        <div className="comprobante-item">
-          <div className="comprobante-header">
-            <label className="checkbox-label">
-              <input
-                type="checkbox"
-                name="configuracion_comprobantes_compras.nota_credito.activo"
-                checked={formData.configuracion_comprobantes_compras?.nota_credito?.activo || false}
-                onChange={handleInputChange}
-                disabled={loading}
-              />
-              <span className="checkmark"></span>
-              📋 Nota Crédito de Compra
-            </label>
-          </div>
-          <div className="comprobante-config">
-            <div className="form-group">
-              <label htmlFor="codigo_nota_credito_compra">Código:</label>
-              <input
-                type="text"
-                id="codigo_nota_credito_compra"
-                name="configuracion_comprobantes_compras.nota_credito.codigo"
-                value={formData.configuracion_comprobantes_compras?.nota_credito?.codigo || ''}
-                onChange={handleInputChange}
-                placeholder="91"
-                disabled={loading || !(formData.configuracion_comprobantes_compras?.nota_credito?.activo || false)}
-                className="codigo-input"
-              />
-              <small className="field-help">
-                Código para notas crédito de compra
-              </small>
-            </div>
-          </div>
-        </div>
-
-        <div className="comprobante-item">
-          <div className="comprobante-header">
-            <label className="checkbox-label">
-              <input
-                type="checkbox"
-                name="configuracion_comprobantes_compras.nota_debito.activo"
-                checked={formData.configuracion_comprobantes_compras?.nota_debito?.activo || false}
-                onChange={handleInputChange}
-                disabled={loading}
-              />
-              <span className="checkmark"></span>
-              📝 Nota Débito de Compra
-            </label>
-          </div>
-          <div className="comprobante-config">
-            <div className="form-group">
-              <label htmlFor="codigo_nota_debito_compra">Código:</label>
-              <input
-                type="text"
-                id="codigo_nota_debito_compra"
-                name="configuracion_comprobantes_compras.nota_debito.codigo"
-                value={formData.configuracion_comprobantes_compras?.nota_debito?.codigo || ''}
-                onChange={handleInputChange}
-                placeholder="92"
-                disabled={loading || !(formData.configuracion_comprobantes_compras?.nota_debito?.activo || false)}
-                className="codigo-input"
-              />
-              <small className="field-help">
-                Código para notas débito de compra
-              </small>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </div>
@@ -116,4 +185,3 @@ const ComprobantesCompras = ({ formData, handleInputChange, loading }) => {
 };
 
 export default ComprobantesCompras;
-

@@ -83,16 +83,7 @@ CREATE TABLE public.empresas (
     codigo_pais character varying(10) DEFAULT 'Co'::character varying,
     codigo_departamento character varying(10),
     codigo_ciudad character varying(10),
-    usuario_id integer NOT NULL,
-    configuracion_comprobantes character varying(1000),
-    configuracion_comprobantes_compras character varying(1000),
-    registro_cuentas character varying(5000),
-    registro_cuentas_ventas character varying(2500),
-    registro_cuentas_compras character varying(2500),
-    registro_cuentas_factura_venta character varying(5000),
-    registro_cuentas_nota_credito character varying(5000),
-    registro_cuentas_factura_compra character varying(5000),
-    registro_cuentas_nota_credito_compra character varying(5000)
+    usuario_id integer NOT NULL
 );
 
 ALTER TABLE public.empresas OWNER TO postgres;

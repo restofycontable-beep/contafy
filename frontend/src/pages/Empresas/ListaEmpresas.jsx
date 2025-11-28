@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import SearchBar from '../../components/shared/SearchBar';
+import SectionBanner from '../../components/shared/SectionBanner';
 import { useAuth } from '../../contexts/AuthContext';
+import { formatearFechaConHora } from '../../utils/dateUtils';
+import { formatearTamano } from '../../utils/formatUtils';
 import './ListaEmpresas.css';
 
 const ListaEmpresas = ({ onViewChange, onEmpresaSelect }) => {
@@ -200,27 +204,6 @@ const ListaEmpresas = ({ onViewChange, onEmpresaSelect }) => {
     }
   };
 
-  const formatearFecha = (fechaString) => {
-    try {
-      return new Date(fechaString).toLocaleString('es-ES', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit'
-      });
-    } catch (error) {
-      return fechaString;
-    }
-  };
-
-  const formatearTamano = (bytes) => {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-  };
 
   const eliminarEmpresa = async (e, empresaId) => {
     e.stopPropagation(); // Evita que se active la navegación al eliminar
@@ -262,26 +245,15 @@ const ListaEmpresas = ({ onViewChange, onEmpresaSelect }) => {
     }
   };
 
-  const handleConfigClick = (e, empresa) => {
-    e.stopPropagation();
-    
-    if (configuraciones[empresa.id]) {
-      // Si ya están cargados, ocultar
-      setConfiguraciones(prev => {
-        const newState = { ...prev };
-        delete newState[empresa.id];
-        return newState;
-      });
-    } else {
-      // Si no están cargados, cargar
-      cargarConfiguracionEmpresa(empresa.id);
-    }
-  };
-
   const handleIconoClick = (e, empresa) => {
     // Si hay evento, evitar propagación (para botones internos)
     if (e) {
       e.stopPropagation();
+    }
+    // Establecer empresa seleccionada
+    setEmpresaSeleccionada(empresa);
+    if (onEmpresaSelect) {
+      onEmpresaSelect(empresa);
     }
     // Redirigir a la pantalla de gestión de empresa
     if (onViewChange) {
@@ -337,48 +309,31 @@ const ListaEmpresas = ({ onViewChange, onEmpresaSelect }) => {
 
   return (
     <div className="empresas-container">
-      <div className="empresas-header-banner">
-        <div className="welcome-section">
-          <p className="empresas-subtitle">
-            📋 Mis Empresas. Ver y gestionar todas las empresas registradas
-          </p>
-        </div>
-      </div>
+      <SectionBanner 
+        title="MIS EMPRESAS"
+        subtitle="Gestiona y administra todas tus empresas registradas"
+        icon="📋"
+      >
+        <button 
+          className="btn btn-primary"
+          onClick={() => onViewChange && onViewChange('crear-empresa')}
+        >
+          ➕ Crear Empresa
+        </button>
+      </SectionBanner>
 
       <div className="empresa-form-card">
-        <div className="empresas-header">
-          <div className="empresas-header-top">
-            <div className="empresas-header-title">
-              <h2>Mis Empresas</h2>
-            </div>
-            <div className="empresas-search-container">
-              <input
-                type="text"
-                placeholder="🔍 Buscar empresa por nombre, NIT o representante..."
-                value={terminoBusqueda}
-                onChange={(e) => setTerminoBusqueda(e.target.value)}
-                className="empresas-search-input"
-              />
-              {terminoBusqueda && (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setTerminoBusqueda('');
-                  }}
-                  className="empresas-search-clear"
-                  title="Limpiar búsqueda"
-                >
-                  ✕
-                </button>
-              )}
-            </div>
+        <SearchBar
+          placeholder="Buscar empresa por nombre, NIT o representante..."
+          value={terminoBusqueda}
+          onChange={setTerminoBusqueda}
+        />
+        
+        {terminoBusqueda && (
+          <div className="empresas-search-results">
+            Mostrando {empresasFiltradas.length} de {empresas.length} empresa{empresas.length !== 1 ? 's' : ''}
           </div>
-          {terminoBusqueda && (
-            <div className="empresas-search-results">
-              Mostrando {empresasFiltradas.length} de {empresas.length} empresa{empresas.length !== 1 ? 's' : ''}
-            </div>
-          )}
-        </div>
+        )}
 
         <div className="empresas-list">
         {empresasFiltradas.length === 0 && terminoBusqueda ? (
@@ -513,7 +468,7 @@ const ListaEmpresas = ({ onViewChange, onEmpresaSelect }) => {
                                 {archivo.tipo_procesamiento === 'ventas' ? '📈 Ventas' : '🛒 Compras'}
                               </span>
                               <span className="zip-date">
-                                📅 {formatearFecha(archivo.fecha_generacion)}
+                                📅 {formatearFechaConHora(archivo.fecha_generacion)}
                               </span>
                               <span className="zip-size">
                                 💾 {formatearTamano(archivo.tamano_bytes)}

@@ -3,7 +3,7 @@ import NuevoDocumentoModal from '../../components/procesamiento/NuevoDocumentoMo
 import { useAuth } from '../../contexts/AuthContext';
 import './GestionarEmpresa.css';
 
-const GestionarEmpresa = ({ empresaId, onViewChange }) => {
+const GestionarEmpresa = ({ empresaId, onViewChange, onEmpresaLoaded }) => {
   const { token } = useAuth();
   const [empresa, setEmpresa] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -37,6 +37,10 @@ const GestionarEmpresa = ({ empresaId, onViewChange }) => {
 
       if (response.ok && data.success && data.data) {
         setEmpresa(data.data);
+        // Notificar al Dashboard para mostrar en el header
+        if (onEmpresaLoaded) {
+          onEmpresaLoaded(data.data);
+        }
       } else {
         setError(data.error || 'Error al cargar empresa');
       }

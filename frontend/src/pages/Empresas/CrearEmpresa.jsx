@@ -1,16 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
-import ComprobantesCompras from '../../components/empresa/ComprobantesCompras';
-import ComprobantesVentas from '../../components/empresa/ComprobantesVentas';
 import CuentasContables from '../../components/empresa/CuentasContables';
 import InformacionBasica from '../../components/empresa/InformacionBasica';
 import RepresentanteLegal from '../../components/empresa/RepresentanteLegal';
+import TiposComprobantes from '../../components/empresa/TiposComprobantes';
+import NotificationModal from '../../components/shared/NotificationModal';
 import Tabs from '../../components/shared/Tabs';
 import { useAuth } from '../../contexts/AuthContext';
-import ComprobanteService from '../../services/comprobanteService';
 import './CrearEmpresa.css';
 
 const CrearEmpresa = ({ empresaId, onViewChange }) => {
-  const { getAuthHeaders, fetchWithAuth, token } = useAuth();
+  const { getAuthHeaders, fetchWithAuth } = useAuth();
   const isEditing = !!empresaId;
   
   // Estados para ubicaciones
@@ -33,16 +32,6 @@ const CrearEmpresa = ({ empresaId, onViewChange }) => {
     direccion: '',
     codigo_departamento: '',
     codigo_ciudad: '',
-    configuracion_comprobantes: {
-      factura: { activo: true, codigo: '01' },
-      nota_credito: { activo: true, codigo: '91' },
-      nota_debito: { activo: true, codigo: '92' }
-    },
-    configuracion_comprobantes_compras: {
-      factura: { activo: true, codigo: '01' },
-      nota_credito: { activo: true, codigo: '91' },
-      nota_debito: { activo: true, codigo: '92' }
-    },
     // registro_cuentas_ventas y registro_cuentas_compras eliminados - ahora usamos las secciones específicas
     // Nuevas secciones para el grupo de ventas
     registro_cuentas_factura_venta: {
@@ -99,16 +88,27 @@ const CrearEmpresa = ({ empresaId, onViewChange }) => {
   const [loadingData, setLoadingData] = useState(false);
   const [message, setMessage] = useState({ text: '', type: '' });
   const messageRef = useRef(null);
+  
+  // Estado para el modal de notificaciones
+  const [notification, setNotification] = useState({
+    isOpen: false,
+    type: 'success',
+    title: '',
+    message: ''
+  });
   // Estados para importación de archivos Excel
   const [uploadingFile, setUploadingFile] = useState(false);
   const [fileMessage, setFileMessage] = useState({ text: '', type: '' });
-  const [estadoCuentas, setEstadoCuentas] = useState({ tiene_cuentas: false, total_cuentas: 0 });
   const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
   
   // Preservar activeTab en sessionStorage para que no se pierda
   const [activeTab, setActiveTab] = useState(() => {
     try {
       const saved = sessionStorage.getItem('crear-empresa-tab');
+      // Migrar nombres antiguos de tabs
+      if (saved === 'comprobantes-ventas' || saved === 'comprobantes-compras') {
+        return 'tipos-comprobantes';
+      }
       return saved || 'informacion';
     } catch {
       return 'informacion';
@@ -124,12 +124,26 @@ const CrearEmpresa = ({ empresaId, onViewChange }) => {
     }
   }, [activeTab]);
 
+  // Función para mostrar notificación modal
+  const showNotification = (type, message, title = null) => {
+    setNotification({
+      isOpen: true,
+      type,
+      title,
+      message
+    });
+  };
+
+  // Función para cerrar notificación
+  const closeNotification = () => {
+    setNotification(prev => ({ ...prev, isOpen: false }));
+  };
+
   // Definir orden de tabs
   const tabsOrder = [
     'informacion',
     'representante',
-    'comprobantes-ventas',
-    'comprobantes-compras',
+    'tipos-comprobantes',
     'cuentas'
   ];
 
@@ -185,27 +199,7 @@ const CrearEmpresa = ({ empresaId, onViewChange }) => {
       if (response.ok && data.success && data.data) {
         const empresa = data.data;
         
-        // Cargar comprobantes desde la nueva tabla
-        const comprobantesVentas = await ComprobanteService.getComprobantes(empresaId, 'venta', token);
-        const comprobantesCompras = await ComprobanteService.getComprobantes(empresaId, 'compra', token);
-        
-        // Convertir comprobantes de la tabla al formato JSON (para compatibilidad con el formulario)
-        const configVentas = comprobantesVentas.success && comprobantesVentas.data.length > 0
-          ? ComprobanteService.convertToJsonFormat(comprobantesVentas.data)
-          : (empresa.configuracion_comprobantes || {
-              factura: { activo: true, codigo: '01' },
-              nota_credito: { activo: true, codigo: '91' },
-              nota_debito: { activo: true, codigo: '92' }
-            });
-        
-        const configCompras = comprobantesCompras.success && comprobantesCompras.data.length > 0
-          ? ComprobanteService.convertToJsonFormat(comprobantesCompras.data)
-          : (empresa.configuracion_comprobantes_compras || {
-              factura: { activo: true, codigo: '01' },
-              nota_credito: { activo: true, codigo: '91' },
-              nota_debito: { activo: true, codigo: '92' }
-            });
-        
+        // Los comprobantes y cuentas se cargan directamente desde sus componentes
         setFormData({
           nit: empresa.nit || '',
           razon_social: empresa.razon_social || '',
@@ -215,8 +209,6 @@ const CrearEmpresa = ({ empresaId, onViewChange }) => {
           direccion: empresa.direccion || '',
           codigo_departamento: empresa.codigo_departamento || '',
           codigo_ciudad: empresa.codigo_ciudad || '',
-          configuracion_comprobantes: configVentas,
-          configuracion_comprobantes_compras: configCompras,
           // Campos legacy eliminados - solo usamos las secciones específicas
           // Nuevas secciones para el grupo de ventas
           registro_cuentas_factura_venta: empresa.registro_cuentas_factura_venta || {
@@ -349,217 +341,16 @@ const CrearEmpresa = ({ empresaId, onViewChange }) => {
 
   // Cargar estado de cuentas importadas
   useEffect(() => {
-    obtenerEstadoCuentas();
   }, []);
 
-  // Plantillas predefinidas por tipo de empresa
-  const plantillasEmpresa = {
-    comercial: {
-      comprobantes: {
-        factura: { activo: true, codigo: '01' },
-        nota_credito: { activo: true, codigo: '91' },
-        nota_debito: { activo: true, codigo: '92' }
-      },
-      comprobantes_compras: {
-        factura: { activo: true, codigo: '01' },
-        nota_credito: { activo: true, codigo: '91' },
-        nota_debito: { activo: true, codigo: '92' }
-      },
-      cuentas: {
-        cuenta_1: { codigo: '1105', nombre: 'Caja General', activo: true },
-        cuenta_2: { codigo: '1110', nombre: 'Bancos', activo: true },
-        cuenta_3: { codigo: '1305', nombre: 'Clientes', activo: true },
-        cuenta_4: { codigo: '1435', nombre: 'Mercancías no Fabricadas', activo: true },
-        cuenta_5: { codigo: '2365', nombre: 'Retención en la Fuente', activo: true },
-        cuenta_6: { codigo: '2408', nombre: 'IVA por Pagar', activo: true },
-        cuenta_7: { codigo: '2205', nombre: 'Proveedores', activo: true },
-        cuenta_8: { codigo: '4135', nombre: 'Comercio al por Mayor', activo: true },
-        cuenta_9: { codigo: '6205', nombre: 'Compra de Mercancías', activo: true },
-        cuenta_10: { codigo: '5115', nombre: 'Gastos de Ventas', activo: true }
-      }
-    },
-    servicios: {
-      comprobantes: {
-        factura: { activo: true, codigo: '01' },
-        nota_credito: { activo: true, codigo: '91' },
-        nota_debito: { activo: false, codigo: '92' }
-      },
-      comprobantes_compras: {
-        factura: { activo: true, codigo: '01' },
-        nota_credito: { activo: true, codigo: '91' },
-        nota_debito: { activo: false, codigo: '92' }
-      },
-      cuentas: {
-        cuenta_1: { codigo: '1105', nombre: 'Caja', activo: true },
-        cuenta_2: { codigo: '1110', nombre: 'Bancos', activo: true },
-        cuenta_3: { codigo: '1305', nombre: 'Clientes', activo: true },
-        cuenta_4: { codigo: '1524', nombre: 'Equipos de Oficina', activo: true },
-        cuenta_5: { codigo: '2365', nombre: 'Retención en la Fuente', activo: true },
-        cuenta_6: { codigo: '2408', nombre: 'IVA por Pagar', activo: true },
-        cuenta_7: { codigo: '2380', nombre: 'Acreedores Varios', activo: true },
-        cuenta_8: { codigo: '4220', nombre: 'Servicios Técnicos', activo: true },
-        cuenta_9: { codigo: '5105', nombre: 'Gastos de Personal', activo: true },
-        cuenta_10: { codigo: '5115', nombre: 'Gastos Generales', activo: true }
-      }
-    },
-    manufacturera: {
-      comprobantes: {
-        factura: { activo: true, codigo: '01' },
-        nota_credito: { activo: true, codigo: '91' },
-        nota_debito: { activo: true, codigo: '92' }
-      },
-      comprobantes_compras: {
-        factura: { activo: true, codigo: '01' },
-        nota_credito: { activo: true, codigo: '91' },
-        nota_debito: { activo: true, codigo: '92' }
-      },
-      cuentas: {
-        cuenta_1: { codigo: '1105', nombre: 'Caja', activo: true },
-        cuenta_2: { codigo: '1110', nombre: 'Bancos', activo: true },
-        cuenta_3: { codigo: '1305', nombre: 'Clientes', activo: true },
-        cuenta_4: { codigo: '1405', nombre: 'Materias Primas', activo: true },
-        cuenta_5: { codigo: '1410', nombre: 'Productos en Proceso', activo: true },
-        cuenta_6: { codigo: '1430', nombre: 'Productos Terminados', activo: true },
-        cuenta_7: { codigo: '2205', nombre: 'Proveedores', activo: true },
-        cuenta_8: { codigo: '4105', nombre: 'Ventas de Productos', activo: true },
-        cuenta_9: { codigo: '6105', nombre: 'Costo de Ventas', activo: true },
-        cuenta_10: { codigo: '7205', nombre: 'Mano de Obra Directa', activo: true }
-      }
-    },
-    construccion: {
-      comprobantes: {
-        factura: { activo: true, codigo: '01' },
-        nota_credito: { activo: true, codigo: '91' },
-        nota_debito: { activo: true, codigo: '92' }
-      },
-      comprobantes_compras: {
-        factura: { activo: true, codigo: '01' },
-        nota_credito: { activo: true, codigo: '91' },
-        nota_debito: { activo: true, codigo: '92' }
-      },
-      cuentas: {
-        cuenta_1: { codigo: '1105', nombre: 'Caja', activo: true },
-        cuenta_2: { codigo: '1110', nombre: 'Bancos', activo: true },
-        cuenta_3: { codigo: '1305', nombre: 'Clientes', activo: true },
-        cuenta_4: { codigo: '1355', nombre: 'Anticipos y Avances', activo: true },
-        cuenta_5: { codigo: '1405', nombre: 'Materiales', activo: true },
-        cuenta_6: { codigo: '1705', nombre: 'Obras en Construcción', activo: true },
-        cuenta_7: { codigo: '2205', nombre: 'Proveedores', activo: true },
-        cuenta_8: { codigo: '4210', nombre: 'Servicios de Construcción', activo: true },
-        cuenta_9: { codigo: '6105', nombre: 'Costo de Construcción', activo: true },
-        cuenta_10: { codigo: '5110', nombre: 'Gastos de Obra', activo: true }
-      }
-    },
-    transporte: {
-      comprobantes: {
-        factura: { activo: true, codigo: '01' },
-        nota_credito: { activo: true, codigo: '91' },
-        nota_debito: { activo: false, codigo: '92' }
-      },
-      comprobantes_compras: {
-        factura: { activo: true, codigo: '01' },
-        nota_credito: { activo: true, codigo: '91' },
-        nota_debito: { activo: false, codigo: '92' }
-      },
-      cuentas: {
-        cuenta_1: { codigo: '1105', nombre: 'Caja', activo: true },
-        cuenta_2: { codigo: '1110', nombre: 'Bancos', activo: true },
-        cuenta_3: { codigo: '1305', nombre: 'Clientes', activo: true },
-        cuenta_4: { codigo: '1540', nombre: 'Flota y Equipo de Transporte', activo: true },
-        cuenta_5: { codigo: '2365', nombre: 'Retención en la Fuente', activo: true },
-        cuenta_6: { codigo: '2408', nombre: 'IVA por Pagar', activo: true },
-        cuenta_7: { codigo: '2205', nombre: 'Proveedores', activo: true },
-        cuenta_8: { codigo: '4240', nombre: 'Servicios de Transporte', activo: true },
-        cuenta_9: { codigo: '6110', nombre: 'Combustibles', activo: true },
-        cuenta_10: { codigo: '5120', nombre: 'Mantenimiento Vehículos', activo: true }
-      }
-    },
-    restaurante: {
-      comprobantes: {
-        factura: { activo: true, codigo: '01' },
-        nota_credito: { activo: true, codigo: '91' },
-        nota_debito: { activo: false, codigo: '92' }
-      },
-      comprobantes_compras: {
-        factura: { activo: true, codigo: '01' },
-        nota_credito: { activo: true, codigo: '91' },
-        nota_debito: { activo: false, codigo: '92' }
-      },
-      cuentas: {
-        cuenta_1: { codigo: '1105', nombre: 'Caja', activo: true },
-        cuenta_2: { codigo: '1110', nombre: 'Bancos', activo: true },
-        cuenta_3: { codigo: '1305', nombre: 'Clientes', activo: true },
-        cuenta_4: { codigo: '1430', nombre: 'Inventario de Alimentos', activo: true },
-        cuenta_5: { codigo: '1435', nombre: 'Inventario de Bebidas', activo: true },
-        cuenta_6: { codigo: '2408', nombre: 'IVA por Pagar', activo: true },
-        cuenta_7: { codigo: '2205', nombre: 'Proveedores', activo: true },
-        cuenta_8: { codigo: '4175', nombre: 'Ventas de Restaurante', activo: true },
-        cuenta_9: { codigo: '6105', nombre: 'Costo de Ventas', activo: true },
-        cuenta_10: { codigo: '5115', nombre: 'Gastos Operacionales', activo: true }
-      }
-    }
-  };
 
-  const handleTipoEmpresaChange = (e) => {
-    const tipoEmpresa = e.target.value;
-    
-    if (tipoEmpresa && plantillasEmpresa[tipoEmpresa]) {
-      const plantilla = plantillasEmpresa[tipoEmpresa];
-      
-      setFormData(prev => ({
-        ...prev,
-        configuracion_comprobantes: plantilla.comprobantes,
-        configuracion_comprobantes_compras: plantilla.comprobantes_compras,
-        registro_cuentas: plantilla.cuentas
-      }));
-      
-      setMessage({ 
-        text: `✅ Plantilla "${tipoEmpresa}" aplicada correctamente. Puedes modificar los valores según tus necesidades.`, 
-        type: 'success' 
-      });
-      
-      // Limpiar mensaje después de 5 segundos
-      setTimeout(() => setMessage({ text: '', type: '' }), 5000);
-    }
-  };
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     
-    // Manejar campos anidados de configuración de comprobantes
-    if (name.includes('configuracion_comprobantes.')) {
-      const parts = name.split('.');
-      const comprobante = parts[1];
-      const campo = parts[2];
-      
-      setFormData(prev => ({
-        ...prev,
-        configuracion_comprobantes: {
-          ...prev.configuracion_comprobantes,
-          [comprobante]: {
-            ...prev.configuracion_comprobantes[comprobante],
-            [campo]: type === 'checkbox' ? checked : value
-          }
-        }
-      }));
-    // Manejar campos anidados de configuración de comprobantes de compras
-    } else if (name.includes('configuracion_comprobantes_compras.')) {
-      const parts = name.split('.');
-      const comprobante = parts[1];
-      const campo = parts[2];
-      
-      setFormData(prev => ({
-        ...prev,
-        configuracion_comprobantes_compras: {
-          ...prev.configuracion_comprobantes_compras,
-          [comprobante]: {
-            ...prev.configuracion_comprobantes_compras[comprobante],
-            [campo]: type === 'checkbox' ? checked : value
-          }
-        }
-      }));
+    // Los comprobantes se manejan directamente desde el componente TiposComprobantes
     // Campos legacy de registro_cuentas_ventas y registro_cuentas_compras eliminados
-    } else if (name.includes('registro_cuentas_factura_venta.')) {
+    if (name.includes('registro_cuentas_factura_venta.')) {
       // Manejar campos anidados de registro de cuentas de factura de venta
       const parts = name.split('.');
       const cuenta = parts[1];
@@ -650,389 +441,6 @@ const CrearEmpresa = ({ empresaId, onViewChange }) => {
     }
   };
 
-  // Función para copiar configuración de Factura de Venta a Nota Crédito
-  const copiarConfiguracionFacturaANota = () => {
-    const cuentasFactura = formData.registro_cuentas_factura_venta || {};
-    
-    setFormData(prev => ({
-      ...prev,
-      registro_cuentas_nota_credito: {
-        ...cuentasFactura
-      }
-    }));
-    
-    setMessage({
-      text: '✅ Configuración copiada exitosamente de Factura de Venta a Nota Crédito',
-      type: 'success'
-    });
-    
-    // Limpiar mensaje después de 3 segundos
-    setTimeout(() => {
-      setMessage({ text: '', type: '' });
-    }, 3000);
-  };
-
-  // Función para copiar configuración de Factura de Compra a Nota Crédito de Compra
-  const copiarConfiguracionFacturaCompraANotaCompra = () => {
-    const cuentasFacturaCompra = formData.registro_cuentas_factura_compra || {};
-    
-    setFormData(prev => ({
-      ...prev,
-      registro_cuentas_nota_credito_compra: {
-        ...cuentasFacturaCompra
-      }
-    }));
-    
-    setMessage({
-      text: '✅ Configuración copiada exitosamente de Factura de Compra a Nota Crédito de Compra',
-      type: 'success'
-    });
-    
-    // Limpiar mensaje después de 3 segundos
-    setTimeout(() => {
-      setMessage({ text: '', type: '' });
-    }, 3000);
-  };
-
-
-  // Función helper para renderizar secciones específicas de ventas (10 cuentas)
-  // Función para obtener el nombre y descripción de cada cuenta según su número
-  const obtenerInfoCuenta = (numeroCuenta) => {
-    const infoCuentas = {
-      1: { nombre: 'BASE GRAVADA', descripcion: 'Valor de productos/servicios gravados con IVA', obligatoria: true, naturalezaDefault: 'credito' },
-      2: { nombre: 'BASE NO GRAVADA', descripcion: 'Valor de productos/servicios exentos de IVA', obligatoria: false, naturalezaDefault: 'credito' },
-      3: { nombre: 'IVA', descripcion: 'Valor del impuesto (IVA)', obligatoria: false, naturalezaDefault: 'credito' },
-      4: { nombre: 'CONTRAPARTIDA', descripcion: 'Clientes, bancos, caja, etc.', obligatoria: true, naturalezaDefault: 'debito' }
-    };
-    
-    return infoCuentas[numeroCuenta] || { 
-      nombre: `ADICIONAL ${numeroCuenta - 4}`, 
-      descripcion: 'Cuenta adicional personalizada', 
-      obligatoria: false,
-      naturalezaDefault: 'debito'
-    };
-  };
-
-  const renderCuentasVentasEspecificas = (tipo, titulo, descripcion) => {
-    const fieldName = tipo === 'factura_venta' ? 'registro_cuentas_factura_venta' : 'registro_cuentas_nota_credito';
-    const cuentas = formData[fieldName] || {};
-    
-    // Obtener cuentas activas y contar cuántas hay
-    const cuentasActivas = Object.keys(cuentas).filter(key => cuentas[key]?.activo);
-    const numeroCuentasActivas = cuentasActivas.length;
-    
-    // Determinar qué cuentas mostrar (activas + una más disponible, máximo 10)
-    const cuentasAMostrar = [];
-    for (let i = 1; i <= 10; i++) {
-      const cuentaKey = `cuenta_${i}`;
-      const cuenta = cuentas[cuentaKey];
-      
-      // Mostrar si está activa o es la primera vacía disponible
-      if (cuenta?.activo || (cuentasAMostrar.length === numeroCuentasActivas && cuentasAMostrar.length < 10)) {
-        cuentasAMostrar.push(i);
-      }
-    }
-    
-    // Solo mostrar botón en la sección de Nota Crédito para copiar desde Factura de Venta
-    const renderBotonCopia = () => {
-      if (tipo === 'nota_credito') {
-        return (
-          <button
-            type="button"
-            onClick={copiarConfiguracionFacturaANota}
-            className="btn btn-copy btn-copy-from-factura"
-            disabled={loading}
-            title="Copiar configuración desde Factura de Venta"
-          >
-            📋 Copiar desde Factura Venta
-          </button>
-        );
-      }
-      return null;
-    };
-    
-    // Función para agregar una nueva cuenta vacía
-    const agregarNuevaCuenta = () => {
-      const siguienteCuenta = numeroCuentasActivas + 1;
-      if (siguienteCuenta <= 10) {
-        const cuentaKey = `cuenta_${siguienteCuenta}`;
-        // Activar automáticamente la siguiente cuenta vacía
-        handleInputChange({
-          target: {
-            name: `${fieldName}.${cuentaKey}.activo`,
-            type: 'checkbox',
-            checked: true
-          }
-        });
-      }
-    };
-    
-    return (
-      <div className="form-section ventas-section">
-        <div className="section-header">
-          <h3>📋 {titulo}</h3>
-          {renderBotonCopia()}
-        </div>
-        <p className="section-description">
-          {descripcion}
-          <span className="cuentas-counter"> ({numeroCuentasActivas}/10 cuentas configuradas)</span>
-        </p>
-        <div className="cuentas-grid">
-          {cuentasAMostrar.map(num => {
-            const cuentaKey = `cuenta_${num}`;
-            const infoCuenta = obtenerInfoCuenta(num);
-            const cuenta = cuentas[cuentaKey] || { codigo: '', nombre: '', activo: false, naturaleza: infoCuenta.naturalezaDefault };
-            
-            return (
-              <div key={cuentaKey} className={`cuenta-item ${infoCuenta.obligatoria ? 'obligatoria' : 'opcional'}`}>
-                <div className="cuenta-header-descriptiva">
-                  <div className="cuenta-header-layout">
-                    <label className="checkbox-wrapper" htmlFor={`checkbox_${tipo}_${cuentaKey}`}>
-                      <input
-                        type="checkbox"
-                        id={`checkbox_${tipo}_${cuentaKey}`}
-                        name={`${fieldName}.${cuentaKey}.activo`}
-                        checked={cuenta.activo || false}
-                        onChange={handleInputChange}
-                        disabled={loading}
-                      />
-                      <span className="checkmark"></span>
-                    </label>
-                    <div className="cuenta-info-derecha">
-                      <div className="cuenta-titulo-info">
-                        <span className="cuenta-numero-label">Cuenta {num}</span>
-                        <span className="cuenta-tipo-badge">{infoCuenta.nombre}</span>
-                        {infoCuenta.obligatoria && <span className="badge-obligatoria">OBLIGATORIA</span>}
-                      </div>
-                      <p className="cuenta-ayuda">{infoCuenta.descripcion}</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="cuenta-fields">
-                  <div className="form-group">
-                    <label htmlFor={`codigo_${tipo}_${cuentaKey}`}>Código:</label>
-                    <input
-                      type="text"
-                      id={`codigo_${tipo}_${cuentaKey}`}
-                      name={`${fieldName}.${cuentaKey}.codigo`}
-                      value={cuenta.codigo || ''}
-                      onChange={handleInputChange}
-                      placeholder={num === 1 ? "41359501" : num === 2 ? "41359502" : num === 3 ? "24080501" : num === 4 ? "13050501" : "Ej: 11050501"}
-                      disabled={loading || !(cuenta.activo || false)}
-                      className="codigo-input"
-                      maxLength="8"
-                      pattern="[0-9]{1,8}"
-                      title="Ingrese hasta 8 dígitos numéricos"
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor={`nombre_${tipo}_${cuentaKey}`}>Nombre:</label>
-                    <input
-                      type="text"
-                      id={`nombre_${tipo}_${cuentaKey}`}
-                      name={`${fieldName}.${cuentaKey}.nombre`}
-                      value={cuenta.nombre || ''}
-                      onChange={handleInputChange}
-                      placeholder={num === 1 ? "Ingresos Gravados" : num === 2 ? "Ingresos No Gravados" : num === 3 ? "IVA por Pagar" : num === 4 ? "Clientes o Caja" : "Nombre de la cuenta"}
-                      disabled={loading || !(cuenta.activo || false)}
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor={`naturaleza_${tipo}_${cuentaKey}`}>Naturaleza:</label>
-                    <select
-                      id={`naturaleza_${tipo}_${cuentaKey}`}
-                      name={`${fieldName}.${cuentaKey}.naturaleza`}
-                      value={cuenta.naturaleza || infoCuenta.naturalezaDefault}
-                      onChange={handleInputChange}
-                      disabled={loading || !(cuenta.activo || false)}
-                      className="naturaleza-select"
-                    >
-                      <option value="debito">💰 Débito</option>
-                      <option value="credito">💳 Crédito</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-        
-        {/* Botón para agregar más cuentas */}
-        {numeroCuentasActivas < 10 && (
-          <button
-            type="button"
-            onClick={agregarNuevaCuenta}
-            className="btn btn-add-cuenta"
-            disabled={loading}
-          >
-            ➕ Agregar otra cuenta ({numeroCuentasActivas}/10)
-          </button>
-        )}
-      </div>
-    );
-  };
-
-  // Función helper para renderizar secciones específicas de compras (10 cuentas)
-  const renderCuentasComprasEspecificas = (tipo, titulo, descripcion) => {
-    const fieldName = tipo === 'factura_compra' ? 'registro_cuentas_factura_compra' : 'registro_cuentas_nota_credito_compra';
-    const cuentas = formData[fieldName] || {};
-    
-    // Obtener cuentas activas y contar cuántas hay
-    const cuentasActivas = Object.keys(cuentas).filter(key => cuentas[key]?.activo);
-    const numeroCuentasActivas = cuentasActivas.length;
-    
-    // Determinar qué cuentas mostrar (activas + una más disponible, máximo 10)
-    const cuentasAMostrar = [];
-    for (let i = 1; i <= 10; i++) {
-      const cuentaKey = `cuenta_${i}`;
-      const cuenta = cuentas[cuentaKey];
-      
-      // Mostrar si está activa o es la primera vacía disponible
-      if (cuenta?.activo || (cuentasAMostrar.length === numeroCuentasActivas && cuentasAMostrar.length < 10)) {
-        cuentasAMostrar.push(i);
-      }
-    }
-    
-    // Solo mostrar botón en la sección de Nota Crédito de Compra para copiar desde Factura de Compra
-    const renderBotonCopia = () => {
-      if (tipo === 'nota_credito_compra') {
-        return (
-          <button
-            type="button"
-            onClick={copiarConfiguracionFacturaCompraANotaCompra}
-            className="btn btn-copy btn-copy-from-factura-compra"
-            disabled={loading}
-            title="Copiar configuración desde Factura de Compra"
-          >
-            📋 Copiar desde Factura Compra
-          </button>
-        );
-      }
-      return null;
-    };
-    
-    // Función para agregar una nueva cuenta vacía
-    const agregarNuevaCuenta = () => {
-      const siguienteCuenta = numeroCuentasActivas + 1;
-      if (siguienteCuenta <= 10) {
-        const cuentaKey = `cuenta_${siguienteCuenta}`;
-        // Activar automáticamente la siguiente cuenta vacía
-        handleInputChange({
-          target: {
-            name: `${fieldName}.${cuentaKey}.activo`,
-            type: 'checkbox',
-            checked: true
-          }
-        });
-      }
-    };
-    
-    return (
-      <div className="form-section compras-section">
-        <div className="section-header">
-          <h3>📋 {titulo}</h3>
-          {renderBotonCopia()}
-        </div>
-        <p className="section-description">
-          {descripcion}
-          <span className="cuentas-counter"> ({numeroCuentasActivas}/10 cuentas configuradas)</span>
-        </p>
-        <div className="cuentas-grid">
-          {cuentasAMostrar.map(num => {
-            const cuentaKey = `cuenta_${num}`;
-            const infoCuenta = obtenerInfoCuenta(num);
-            const cuenta = cuentas[cuentaKey] || { codigo: '', nombre: '', activo: false, naturaleza: infoCuenta.naturalezaDefault };
-            
-            return (
-              <div key={cuentaKey} className={`cuenta-item ${infoCuenta.obligatoria ? 'obligatoria' : 'opcional'}`}>
-                <div className="cuenta-header-descriptiva">
-                  <div className="cuenta-header-layout">
-                    <label className="checkbox-wrapper" htmlFor={`checkbox_${tipo}_${cuentaKey}`}>
-                      <input
-                        type="checkbox"
-                        id={`checkbox_${tipo}_${cuentaKey}`}
-                        name={`${fieldName}.${cuentaKey}.activo`}
-                        checked={cuenta.activo || false}
-                        onChange={handleInputChange}
-                        disabled={loading}
-                      />
-                      <span className="checkmark"></span>
-                    </label>
-                    <div className="cuenta-info-derecha">
-                      <div className="cuenta-titulo-info">
-                        <span className="cuenta-numero-label">Cuenta {num}</span>
-                        <span className="cuenta-tipo-badge">{infoCuenta.nombre}</span>
-                        {infoCuenta.obligatoria && <span className="badge-obligatoria">OBLIGATORIA</span>}
-                      </div>
-                      <p className="cuenta-ayuda">{infoCuenta.descripcion}</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="cuenta-fields">
-                  <div className="form-group">
-                    <label htmlFor={`codigo_${tipo}_${cuentaKey}`}>Código:</label>
-                    <input
-                      type="text"
-                      id={`codigo_${tipo}_${cuentaKey}`}
-                      name={`${fieldName}.${cuentaKey}.codigo`}
-                      value={cuenta.codigo || ''}
-                      onChange={handleInputChange}
-                      placeholder="22050501"
-                      disabled={loading || !(cuenta.activo || false)}
-                      className="codigo-input"
-                      maxLength="8"
-                      pattern="[0-9]{1,8}"
-                      title="Ingrese hasta 8 dígitos numéricos"
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor={`nombre_${tipo}_${cuentaKey}`}>Nombre:</label>
-                    <input
-                      type="text"
-                      id={`nombre_${tipo}_${cuentaKey}`}
-                      name={`${fieldName}.${cuentaKey}.nombre`}
-                      value={cuenta.nombre || ''}
-                      onChange={handleInputChange}
-                      placeholder="Proveedores Nacionales"
-                      disabled={loading || !(cuenta.activo || false)}
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor={`naturaleza_${tipo}_${cuentaKey}`}>Naturaleza:</label>
-                    <select
-                      id={`naturaleza_${tipo}_${cuentaKey}`}
-                      name={`${fieldName}.${cuentaKey}.naturaleza`}
-                      value={cuenta.naturaleza || 'credito'}
-                      onChange={handleInputChange}
-                      disabled={loading || !(cuenta.activo || false)}
-                      className="naturaleza-select"
-                    >
-                      <option value="debito">💰 Débito</option>
-                      <option value="credito">💳 Crédito</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-        
-        {/* Botón para agregar más cuentas */}
-        {numeroCuentasActivas < 10 && (
-          <button
-            type="button"
-            onClick={agregarNuevaCuenta}
-            className="btn btn-add-cuenta"
-            disabled={loading}
-          >
-            ➕ Agregar otra cuenta ({numeroCuentasActivas}/10)
-          </button>
-        )}
-      </div>
-    );
-  };
-
-  // Función helper eliminada - ya no se usa
 
   // Validación de configuración
   const validarConfiguracion = () => {
@@ -1067,23 +475,7 @@ const CrearEmpresa = ({ empresaId, onViewChange }) => {
       }
     }
     
-    // Validar que al menos un tipo de comprobante esté activo
-    const comprobantesActivos = Object.values(formData.configuracion_comprobantes || {})
-      .some(comp => comp?.activo);
-    
-    if (!comprobantesActivos) {
-      errores.push("Debe activar al menos un tipo de comprobante");
-    }
-    
-    // Validar códigos de comprobantes activos
-    Object.entries(formData.configuracion_comprobantes || {}).forEach(([tipo, config]) => {
-      if (config?.activo && !config?.codigo?.trim()) {
-        errores.push(`El código para ${tipo} es requerido`);
-      } else if (config?.activo && config?.codigo && !/^\d{1,3}$/.test(config.codigo.trim())) {
-        errores.push(`El código para ${tipo} (${config.codigo}) debe ser numérico de 1-3 dígitos`);
-      }
-    });
-    
+    // Los comprobantes se validan directamente desde el componente TiposComprobantes
     // Las cuentas contables son opcionales - el contador las configurará según necesidad
     
     // Validaciones de campos legacy eliminadas - solo validamos las secciones específicas
@@ -1166,11 +558,8 @@ const CrearEmpresa = ({ empresaId, onViewChange }) => {
     const erroresValidacion = validarConfiguracion();
     
     if (erroresValidacion.length > 0) {
-      const mensajeError = `⚠️ Por favor completa o corrige los siguientes campos antes de guardar:\n${erroresValidacion.map(e => `  • ${e}`).join('\n')}`;
-      setMessage({ 
-        text: mensajeError, 
-        type: 'error' 
-      });
+      const mensajeError = `Por favor completa o corrige los siguientes campos antes de guardar:\n\n${erroresValidacion.map(e => `• ${e}`).join('\n')}`;
+      showNotification('warning', mensajeError, 'Campos Requeridos');
       return;
     }
     
@@ -1178,12 +567,6 @@ const CrearEmpresa = ({ empresaId, onViewChange }) => {
     setMessage({ text: '', type: '' });
 
     try {
-      console.log('💾 CrearEmpresa: Guardando empresa', {
-        isEditing,
-        empresaId: isEditing ? empresaId : 'nueva'
-      });
-
-      // Guardar empresa primero
       const url = isEditing 
         ? `${process.env.REACT_APP_API_URL || 'http://127.0.0.1:8000'}/api/empresas/${empresaId}`
         : `${process.env.REACT_APP_API_URL || 'http://127.0.0.1:8000'}/api/empresas/`;
@@ -1219,112 +602,23 @@ const CrearEmpresa = ({ empresaId, onViewChange }) => {
       }
 
       if (response.ok && (data.success || data.data)) {
-        const empresaGuardadaId = data.data?.id || empresaId;
-        console.log('✅ CrearEmpresa: Empresa guardada exitosamente', {
-          isEditing,
-          empresaId: empresaGuardadaId
-        });
-
-        // Guardar comprobantes en la nueva tabla
-        try {
-          // Guardar comprobantes de ventas
-          const tiposVentas = ['factura', 'nota_credito', 'nota_debito'];
-          for (const tipo of tiposVentas) {
-            const comprobante = formData.configuracion_comprobantes?.[tipo];
-            if (comprobante) {
-              // Buscar si ya existe
-              const comprobantesExistentes = await ComprobanteService.getComprobantes(
-                empresaGuardadaId, 
-                'venta', 
-                token
-              );
-              const existente = comprobantesExistentes.data?.find(
-                c => c.tipo_comprobante === tipo && c.categoria === 'venta'
-              );
-              
-              if (existente) {
-                // Actualizar existente
-                await ComprobanteService.updateComprobante(
-                  existente.id,
-                  empresaGuardadaId,
-                  {
-                    codigo: comprobante.codigo || '',
-                    activo: comprobante.activo !== undefined ? comprobante.activo : true
-                  },
-                  token
-                );
-              } else {
-                // Crear nuevo
-                await ComprobanteService.createComprobante(
-                  empresaGuardadaId,
-                  {
-                    tipo_comprobante: tipo,
-                    categoria: 'venta',
-                    codigo: comprobante.codigo || '',
-                    activo: comprobante.activo !== undefined ? comprobante.activo : true
-                  },
-                  token
-                );
-              }
+        // Mostrar notificación de éxito
+        showNotification(
+          'success',
+          isEditing 
+            ? 'Los datos de la empresa han sido actualizados correctamente.'
+            : 'La empresa ha sido creada exitosamente.\n\nAhora puedes configurar los tipos de comprobantes y agregar cuentas contables.',
+          isEditing ? 'Empresa Actualizada' : 'Empresa Creada'
+        );
+        
+        // Si es creación nueva, redirigir a editar la empresa recién creada para poder agregar cuentas
+        if (!isEditing && data.data?.id) {
+          setTimeout(() => {
+            if (onViewChange) {
+              onViewChange('editar-empresa', data.data.id);
             }
-          }
-          
-          // Guardar comprobantes de compras
-          const tiposCompras = ['factura', 'nota_credito', 'nota_debito'];
-          for (const tipo of tiposCompras) {
-            const comprobante = formData.configuracion_comprobantes_compras?.[tipo];
-            if (comprobante) {
-              // Buscar si ya existe
-              const comprobantesExistentes = await ComprobanteService.getComprobantes(
-                empresaGuardadaId, 
-                'compra', 
-                token
-              );
-              const existente = comprobantesExistentes.data?.find(
-                c => c.tipo_comprobante === tipo && c.categoria === 'compra'
-              );
-              
-              if (existente) {
-                // Actualizar existente
-                await ComprobanteService.updateComprobante(
-                  existente.id,
-                  empresaGuardadaId,
-                  {
-                    codigo: comprobante.codigo || '',
-                    activo: comprobante.activo !== undefined ? comprobante.activo : true
-                  },
-                  token
-                );
-              } else {
-                // Crear nuevo
-                await ComprobanteService.createComprobante(
-                  empresaGuardadaId,
-                  {
-                    tipo_comprobante: tipo,
-                    categoria: 'compra',
-                    codigo: comprobante.codigo || '',
-                    activo: comprobante.activo !== undefined ? comprobante.activo : true
-                  },
-                  token
-                );
-              }
-            }
-          }
-          console.log('✅ CrearEmpresa: Comprobantes guardados en la nueva tabla');
-        } catch (comprobanteError) {
-          console.error('⚠️ CrearEmpresa: Error guardando comprobantes en la nueva tabla', comprobanteError);
-          // No bloquear el guardado si falla la actualización de comprobantes
+          }, 3000); // Esperar 3 segundos para que el usuario vea el mensaje
         }
-
-        // Mostrar mensaje de éxito
-        setMessage({ 
-          text: isEditing ? '✅ Empresa actualizada exitosamente' : '✅ Empresa creada exitosamente', 
-          type: 'success' 
-        });
-        // Limpiar el mensaje después de 5 segundos
-        setTimeout(() => {
-          setMessage({ text: '', type: '' });
-        }, 5000);
         
         if (!isEditing) {
           // Limpiar formulario solo si es creación
@@ -1337,16 +631,6 @@ const CrearEmpresa = ({ empresaId, onViewChange }) => {
             direccion: '',
             codigo_departamento: '',
             codigo_ciudad: '',
-            configuracion_comprobantes: {
-              factura: { activo: true, codigo: '01' },
-              nota_credito: { activo: true, codigo: '91' },
-              nota_debito: { activo: true, codigo: '92' }
-            },
-            configuracion_comprobantes_compras: {
-              factura: { activo: true, codigo: '01' },
-              nota_credito: { activo: true, codigo: '91' },
-              nota_debito: { activo: true, codigo: '92' }
-            },
             registro_cuentas_factura_venta: {
               cuenta_1: { codigo: '', nombre: '', activo: false, naturaleza: 'debito' },
               cuenta_2: { codigo: '', nombre: '', activo: false, naturaleza: 'debito' },
@@ -1405,13 +689,6 @@ const CrearEmpresa = ({ empresaId, onViewChange }) => {
           }, 500);
         }
       } else {
-        console.error('❌ CrearEmpresa: Error al guardar empresa', {
-          error: data.error || data.detail,
-          status: response.status,
-          data: data
-        });
-        
-        // Manejar diferentes tipos de errores del servidor
         let mensajeError = '';
         
         if (response.status === 422 && data.detail) {
@@ -1453,17 +730,9 @@ const CrearEmpresa = ({ empresaId, onViewChange }) => {
             : '⚠️ Error al registrar empresa. Por favor verifica que todos los campos requeridos estén completos correctamente.';
         }
         
-        setMessage({ 
-          text: mensajeError, 
-          type: 'error' 
-        });
+        showNotification('error', mensajeError, 'Error al Procesar');
       }
     } catch (error) {
-      console.error('❌ CrearEmpresa: Error de excepción', {
-        error: error.message,
-        stack: error.stack
-      });
-      
       let mensajeError = '⚠️ Error al procesar la solicitud. Por favor, intenta nuevamente.';
       
       // Manejar diferentes tipos de errores
@@ -1479,10 +748,7 @@ const CrearEmpresa = ({ empresaId, onViewChange }) => {
         }
       }
       
-      setMessage({ 
-        text: mensajeError, 
-        type: 'error' 
-      });
+      showNotification('error', mensajeError, 'Error de Conexión');
     } finally {
       // CRÍTICO: Siempre desactivar loading, incluso si hay errores
       setLoading(false);
@@ -1497,95 +763,18 @@ const CrearEmpresa = ({ empresaId, onViewChange }) => {
   }, []);
 
   // Funciones para manejar plantillas Excel
-  const obtenerEstadoCuentas = async () => {
-    try {
-      let url = `${process.env.REACT_APP_API_URL}/api/procesamiento/estado-cuentas-importadas`;
-      
-      // Agregar empresa_id como parámetro si estamos editando una empresa
-      if (empresaId) {
-        url += `?empresa_id=${empresaId}`;
-      }
-      
-      const response = await fetchWithAuth(url, {
-        method: 'GET',
-      });
-
-      if (response.ok) {
-        const result = await response.json();
-        if (result.success) {
-          setEstadoCuentas(result.data);
-        }
-      }
-    } catch (error) {
-      // console.error('Error obteniendo estado de cuentas:', error);
-    }
-  };
-
-  const descargarPlantillaCuentas = async () => {
-    try {
-      setFileMessage({ text: 'Generando plantilla Excel...', type: 'info' });
-      
-      // Determinar el empresa_id: si es edición usar empresaId (prop), si es creación usar 0
-      const empresaIdParaDescarga = empresaId || 0;
-      
-      const response = await fetchWithAuth(`${process.env.REACT_APP_API_URL}/api/procesamiento/descargar-plantilla-cuentas?empresa_id=${empresaIdParaDescarga}`, {
-        method: 'GET',
-      });
-
-      if (!response.ok) {
-        throw new Error('Error al descargar plantilla');
-      }
-
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.style.display = 'none';
-      a.href = url;
-      
-      // Nombre del archivo basado en si es plantilla o datos de la empresa
-      const empresaNombre = formData.razon_social ? formData.razon_social.replace(/[^a-zA-Z0-9]/g, '_') : 'Nueva_Empresa';
-      const tipoArchivo = empresaIdParaDescarga > 0 ? 'Datos' : 'Plantilla';
-      a.download = `${tipoArchivo}_Cuentas_${empresaNombre}_${new Date().toISOString().slice(0,10)}.xlsx`;
-      
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-
-      setFileMessage({ text: 'Plantilla descargada exitosamente', type: 'success' });
-      setTimeout(() => setFileMessage({ text: '', type: '' }), 3000);
-    } catch (error) {
-      // console.error('Error descargando plantilla:', error);
-      setFileMessage({ text: 'Error al descargar plantilla', type: 'error' });
-      setTimeout(() => setFileMessage({ text: '', type: '' }), 5000);
-    }
-  };
 
   const manejarImportacionArchivo = async (event) => {
     const file = event.target.files[0];
     if (!file) return;
 
-    
-    // Validar que haya una empresa guardada antes de importar
     if (!empresaId) {
       setFileMessage({ 
-        text: '⚠️ Debes guardar la empresa primero antes de importar cuentas. Las cuentas deben estar asociadas a una empresa específica.', 
+        text: '⚠️ Debes guardar la empresa primero antes de importar cuentas.', 
         type: 'error' 
       });
       setTimeout(() => setFileMessage({ text: '', type: '' }), 5000);
       event.target.value = '';
-      return;
-    }
-
-    // Verificar si ya hay cuentas importadas para esta empresa
-    if (estadoCuentas.tiene_cuentas && !mostrarConfirmacion && empresaId) {
-      setFileMessage({ 
-        text: `⚠️ Ya tienes ${estadoCuentas.total_cuentas} cuentas importadas para esta empresa. ¿Quieres reemplazarlas o actualizarlas?`, 
-        type: 'warning' 
-      });
-      setMostrarConfirmacion(true);
-      // Guardar el archivo para procesar después
-      event.target.setAttribute('data-pending-file', 'true');
       return;
     }
     
@@ -1594,10 +783,9 @@ const CrearEmpresa = ({ empresaId, onViewChange }) => {
   };
 
   const procesarArchivoImportacion = async (file) => {
-    // Validar que haya una empresa guardada antes de importar
     if (!empresaId) {
       setFileMessage({ 
-        text: '⚠️ Debes guardar la empresa primero antes de importar cuentas. Las cuentas deben estar asociadas a una empresa específica.', 
+        text: '⚠️ Debes guardar la empresa primero antes de importar cuentas.', 
         type: 'error' 
       });
       setTimeout(() => setFileMessage({ text: '', type: '' }), 5000);
@@ -1610,14 +798,10 @@ const CrearEmpresa = ({ empresaId, onViewChange }) => {
     try {
       const formData = new FormData();
       formData.append('file', file);
-      
-      // Siempre enviar empresa_id (requerido)
       formData.append('empresa_id', empresaId);
 
-      
-      // Usar fetch directo con solo Authorization header para FormData
       const headers = getAuthHeaders();
-      delete headers['Content-Type']; // Remover Content-Type para que el browser lo establezca automáticamente
+      delete headers['Content-Type'];
 
       const response = await fetch(`${process.env.REACT_APP_API_URL}/api/procesamiento/importar-archivo-cuentas`, {
         method: 'POST',
@@ -1625,10 +809,8 @@ const CrearEmpresa = ({ empresaId, onViewChange }) => {
         body: formData,
       });
 
-
       if (!response.ok) {
         const errorText = await response.text();
-        // console.error('❌ Error del servidor:', errorText);
         throw new Error(`Error del servidor (${response.status}): ${errorText}`);
       }
 
@@ -1638,19 +820,14 @@ const CrearEmpresa = ({ empresaId, onViewChange }) => {
         throw new Error(result.error || 'Error al procesar archivo');
       }
 
-      // Mostrar mensaje de éxito simplificado
       setFileMessage({
-        text: 'Archivo procesado exitosamente. Las cuentas se han actualizado correctamente.',
+        text: 'Archivo procesado exitosamente.',
         type: 'success'
       });
 
-      // Actualizar estado de cuentas para que la descarga funcione correctamente
-      await obtenerEstadoCuentas();
       setMostrarConfirmacion(false);
-      
       setTimeout(() => setFileMessage({ text: '', type: '' }), 5000);
     } catch (error) {
-      // console.error('Error importando archivo:', error);
       setFileMessage({ text: error.message, type: 'error' });
       setTimeout(() => setFileMessage({ text: '', type: '' }), 5000);
     } finally {
@@ -1676,26 +853,23 @@ const CrearEmpresa = ({ empresaId, onViewChange }) => {
   
   return (
     <div className="crear-empresa-container">
-      <div className="crear-empresa-header">
+      <div className="crear-empresa-header-banner">
         <div className="welcome-section">
+          <h1 className="crear-empresa-title">
+            {isEditing ? '✏️ Editar Empresa' : '🏢 Crear Nueva Empresa'}
+          </h1>
           <p className="crear-empresa-subtitle">
-            {isEditing ? '✏️ Editar Empresa' : '🏢 Crear Nueva Empresa'}. {isEditing ? 'Modifica los datos de la empresa' : 'Registra una nueva empresa en el sistema'}
+            {isEditing ? 'Modifica los datos de la empresa' : 'Registra una nueva empresa en el sistema'}
           </p>
         </div>
       </div>
 
-      <div className="empresa-form-card">
+      <div className="crear-empresa-content-card">
         <div className="form-header" style={{display: 'none'}}>
           <h2>{isEditing ? '✏️ Editar Empresa' : '🏢 Crear Nueva Empresa'}</h2>
           <p>{isEditing ? 'Modifica los datos de la empresa' : 'Registra una nueva empresa en el sistema'}</p>
         </div>
 
-        {message.text && (
-          <div ref={messageRef} className={`message ${message.type}`}>
-            <span>{message.type === 'success' ? '✅' : message.type === 'warning' ? '⚠️' : '❌'}</span>
-            <div className="message-content">{message.text}</div>
-          </div>
-        )}
 
         {loadingData && (
           <div className="message info">
@@ -1714,8 +888,7 @@ const CrearEmpresa = ({ empresaId, onViewChange }) => {
             tabs={[
               { id: 'informacion', label: 'Información Básica', icon: '🏢' },
               { id: 'representante', label: 'Representante Legal', icon: '👤' },
-              { id: 'comprobantes-ventas', label: 'Comprobantes Ventas', icon: '📈' },
-              { id: 'comprobantes-compras', label: 'Comprobantes Compras', icon: '🛒' },
+              { id: 'tipos-comprobantes', label: 'Tipos de Comprobantes', icon: '📄' },
               { id: 'cuentas', label: 'Cuentas Contables', icon: '💳' }
             ]}
             activeTab={activeTab}
@@ -1742,32 +915,17 @@ const CrearEmpresa = ({ empresaId, onViewChange }) => {
               />
             )}
 
-            {activeTab === 'comprobantes-ventas' && (
-              <ComprobantesVentas
-                formData={formData}
-                handleInputChange={handleInputChange}
-                loading={loading}
-              />
-            )}
-
-            {activeTab === 'comprobantes-compras' && (
-              <ComprobantesCompras
-                formData={formData}
-                handleInputChange={handleInputChange}
+            {activeTab === 'tipos-comprobantes' && (
+              <TiposComprobantes
+                empresaId={empresaId}
                 loading={loading}
               />
             )}
 
             {activeTab === 'cuentas' && (
               <CuentasContables
-                formData={formData}
-                handleInputChange={handleInputChange}
-                loading={loading}
-                renderCuentasVentasEspecificas={renderCuentasVentasEspecificas}
-                renderCuentasComprasEspecificas={renderCuentasComprasEspecificas}
-                estadoCuentas={estadoCuentas}
                 empresaId={empresaId}
-                descargarPlantillaCuentas={descargarPlantillaCuentas}
+                loading={loading}
                 manejarImportacionArchivo={manejarImportacionArchivo}
                 uploadingFile={uploadingFile}
                 mostrarConfirmacion={mostrarConfirmacion}
@@ -1777,7 +935,6 @@ const CrearEmpresa = ({ empresaId, onViewChange }) => {
               />
             )}
           </Tabs>
-
 
           <div className="form-actions">
             {!isLastTab ? (
@@ -1836,6 +993,18 @@ const CrearEmpresa = ({ empresaId, onViewChange }) => {
           </div>
         </form>
       </div>
+
+      {/* Modal de notificaciones */}
+      <NotificationModal
+        isOpen={notification.isOpen}
+        onClose={closeNotification}
+        type={notification.type}
+        title={notification.title}
+        message={notification.message}
+        autoClose={notification.type === 'success'}
+        autoCloseDelay={notification.type === 'success' ? 3000 : 0}
+        showCloseButton={true}
+      />
     </div>
   );
 };

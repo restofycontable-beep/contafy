@@ -29,33 +29,13 @@ class Empresa(BaseModel):
     # Usuario propietario
     usuario_id = Column(Integer, ForeignKey('users.id'), nullable=False)
     
-    # Configuración de comprobantes (JSON)
-    configuracion_comprobantes = Column(String(1000), nullable=True)
-    
-    # Configuración de comprobantes de compras (JSON)
-    configuracion_comprobantes_compras = Column(String(1000), nullable=True)
-    
-    # Registro de cuentas (JSON) - Compatibilidad hacia atrás
-    registro_cuentas = Column(String(5000), nullable=True)
-    
-    # Registro de cuentas separadas (JSON)
-    registro_cuentas_ventas = Column(String(2500), nullable=True)
-    registro_cuentas_compras = Column(String(2500), nullable=True)
-    
-    # Registro de cuentas específicas - 10 cuentas cada una
-    registro_cuentas_factura_venta = Column(String(5000), nullable=True)
-    registro_cuentas_nota_credito = Column(String(5000), nullable=True)
-    
-    # Registro de cuentas específicas de compras - 10 cuentas cada una
-    registro_cuentas_factura_compra = Column(String(5000), nullable=True)
-    registro_cuentas_nota_credito_compra = Column(String(5000), nullable=True)
-    
     # Relaciones
     usuario = relationship("User", back_populates="empresas")
     archivos_procesados = relationship("ArchivoProcesado", back_populates="empresa", cascade="all, delete-orphan")
     archivos_zip_generados = relationship("ArchivoZipGenerado", back_populates="empresa", cascade="all, delete-orphan")
     cuentas_importadas = relationship("CuentaImportada", back_populates="empresa", cascade="all, delete-orphan")
     tipos_comprobantes = relationship("TipoComprobante", back_populates="empresa", cascade="all, delete-orphan")
+    cuentas_globales = relationship("CuentaGlobal", back_populates="empresa", cascade="all, delete-orphan")
     
     def __repr__(self):
         return f"<Empresa(nit='{self.nit}', razon_social='{self.razon_social}')>"
@@ -64,80 +44,6 @@ class Empresa(BaseModel):
         """
         Convierte el modelo a diccionario para JSON
         """
-        import json
-        
-        # Parsear configuración de comprobantes si existe
-        config_comprobantes = None
-        if self.configuracion_comprobantes:
-            try:
-                config_comprobantes = json.loads(self.configuracion_comprobantes)
-            except json.JSONDecodeError:
-                config_comprobantes = None
-        
-        # Parsear configuración de comprobantes de compras si existe
-        config_comprobantes_compras = None
-        if self.configuracion_comprobantes_compras:
-            try:
-                config_comprobantes_compras = json.loads(self.configuracion_comprobantes_compras)
-            except json.JSONDecodeError:
-                config_comprobantes_compras = None
-        
-        # Parsear registro de cuentas si existe
-        registro_cuentas = None
-        if self.registro_cuentas:
-            try:
-                registro_cuentas = json.loads(self.registro_cuentas)
-            except json.JSONDecodeError:
-                registro_cuentas = None
-        
-        # Parsear registro de cuentas de ventas si existe
-        registro_cuentas_ventas = None
-        if self.registro_cuentas_ventas:
-            try:
-                registro_cuentas_ventas = json.loads(self.registro_cuentas_ventas)
-            except json.JSONDecodeError:
-                registro_cuentas_ventas = None
-        
-        # Parsear registro de cuentas de compras si existe
-        registro_cuentas_compras = None
-        if self.registro_cuentas_compras:
-            try:
-                registro_cuentas_compras = json.loads(self.registro_cuentas_compras)
-            except json.JSONDecodeError:
-                registro_cuentas_compras = None
-        
-        # Parsear registro de cuentas de factura de venta si existe
-        registro_cuentas_factura_venta = None
-        if self.registro_cuentas_factura_venta:
-            try:
-                registro_cuentas_factura_venta = json.loads(self.registro_cuentas_factura_venta)
-            except json.JSONDecodeError:
-                registro_cuentas_factura_venta = None
-        
-        # Parsear registro de cuentas de nota crédito si existe
-        registro_cuentas_nota_credito = None
-        if self.registro_cuentas_nota_credito:
-            try:
-                registro_cuentas_nota_credito = json.loads(self.registro_cuentas_nota_credito)
-            except json.JSONDecodeError:
-                registro_cuentas_nota_credito = None
-        
-        # Parsear registro de cuentas de factura de compra si existe
-        registro_cuentas_factura_compra = None
-        if self.registro_cuentas_factura_compra:
-            try:
-                registro_cuentas_factura_compra = json.loads(self.registro_cuentas_factura_compra)
-            except json.JSONDecodeError:
-                registro_cuentas_factura_compra = None
-        
-        # Parsear registro de cuentas de nota crédito de compra si existe
-        registro_cuentas_nota_credito_compra = None
-        if self.registro_cuentas_nota_credito_compra:
-            try:
-                registro_cuentas_nota_credito_compra = json.loads(self.registro_cuentas_nota_credito_compra)
-            except json.JSONDecodeError:
-                registro_cuentas_nota_credito_compra = None
-        
         return {
             'id': self.id,
             'nit': self.nit,
@@ -150,15 +56,6 @@ class Empresa(BaseModel):
             'codigo_departamento': self.codigo_departamento,
             'codigo_ciudad': self.codigo_ciudad,
             'usuario_id': self.usuario_id,
-            'configuracion_comprobantes': config_comprobantes,
-            'configuracion_comprobantes_compras': config_comprobantes_compras,
-            'registro_cuentas': registro_cuentas,
-            'registro_cuentas_ventas': registro_cuentas_ventas,
-            'registro_cuentas_compras': registro_cuentas_compras,
-            'registro_cuentas_factura_venta': registro_cuentas_factura_venta,
-            'registro_cuentas_nota_credito': registro_cuentas_nota_credito,
-            'registro_cuentas_factura_compra': registro_cuentas_factura_compra,
-            'registro_cuentas_nota_credito_compra': registro_cuentas_nota_credito_compra,
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'updated_at': self.updated_at.isoformat() if self.updated_at else None,
             'is_active': self.is_active

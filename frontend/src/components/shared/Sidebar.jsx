@@ -7,11 +7,10 @@ const Sidebar = ({ activeView, onViewChange, isOpen }) => {
   const isAdmin = user?.is_superuser || false;
   
   const menuItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: '🏠' },
-    { id: 'crear-empresa', label: 'Crear Empresa', icon: '🏢' },
     { id: 'mis-empresas', label: 'Mis Empresas', icon: '📋' },
-    ...(isAdmin ? [{ id: 'admin', label: 'Administración', icon: '👥' }] : []),
-    { id: 'configuracion', label: 'Configuración', icon: '⚙️' }
+    { id: 'crear-empresa', label: 'Crear Empresa', icon: '🏢' },
+    { id: 'configuracion', label: 'Configuración', icon: '⚙️' },
+    ...(isAdmin ? [{ id: 'admin', label: 'Administración', icon: '👥' }] : [])
   ];
 
   return (

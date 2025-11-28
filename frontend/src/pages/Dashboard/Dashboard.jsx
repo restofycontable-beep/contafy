@@ -56,6 +56,8 @@ function Dashboard() {
           setEmpresaParaGestionar(empresaId);
           setEmpresaParaEditar(null);
           setEmpresaParaConfigurar(null);
+          // Cargar empresa para mostrarla en el header
+          // TODO: Cargar empresa desde API si es necesario
         }
       }
     } else {
@@ -63,6 +65,7 @@ function Dashboard() {
       setEmpresaParaEditar(null);
       setEmpresaParaConfigurar(null);
       setEmpresaParaGestionar(null);
+      setEmpresaSeleccionada(null);
     }
   }, [location.pathname, params]);
 
@@ -117,8 +120,9 @@ function Dashboard() {
   const getActiveView = () => {
     const path = location.pathname;
     
+    // Redirigir dashboard a mis-empresas
     if (path === '/dashboard' || path === '/') {
-      return 'dashboard';
+      return 'mis-empresas';
     } else if (path === '/crear-empresa') {
       return 'crear-empresa';
     } else if (path === '/mis-empresas') {
@@ -135,129 +139,20 @@ function Dashboard() {
       return 'admin';
     }
     
-    return 'dashboard';
+    return 'mis-empresas';
   };
 
   const activeView = getActiveView();
 
+  // Redirigir automáticamente a mis-empresas cuando se accede a dashboard
+  useEffect(() => {
+    if (location.pathname === '/dashboard' || location.pathname === '/') {
+      navigate('/mis-empresas', { replace: true });
+    }
+  }, [location.pathname, navigate]);
+
   const renderContent = () => {
     switch (activeView) {
-      case 'dashboard':
-        return (
-          <div className="dashboard-content">
-            <div className="dashboard-header">
-              <div className="welcome-section">
-
-                <p className="dashboard-subtitle">
-                  Bienvenido, <strong>{user?.username || 'Usuario'}</strong>. Gestiona tu información contable de manera eficiente.
-                </p>
-              </div>
-
-            </div>
-
-            <div className="dashboard-content-inner">
-              <div className="dashboard-grid">
-              <div className="dashboard-card profile-card">
-                <div className="card-header">
-                  <h3>👤 Mi Perfil</h3>
-                </div>
-                <div className="profile-info">
-                  <div className="profile-avatar">
-                    <div className="avatar-circle">
-                      {user?.username?.charAt(0).toUpperCase() || 'U'}
-                    </div>
-                  </div>
-                  <div className="profile-details">
-                    <div className="info-item">
-                      <span className="info-label">Usuario:</span>
-                      <span className="info-value">{user?.username || 'No disponible'}</span>
-                    </div>
-                    <div className="info-item">
-                      <span className="info-label">Email:</span>
-                      <span className="info-value">{user?.email || 'No disponible'}</span>
-                    </div>
-                    {user?.full_name && (
-                      <div className="info-item">
-                        <span className="info-label">Nombre:</span>
-                        <span className="info-value">{user.full_name}</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              <div className="dashboard-card actions-card">
-                <div className="card-header">
-                  <h3>⚡ Acciones Principales</h3>
-                </div>
-                <div className="main-actions">
-                  <button 
-                    className="main-action-btn primary"
-                    onClick={() => handleViewChange('crear-empresa')}
-                  >
-                    <div className="action-icon">🏢</div>
-                    <div className="action-content">
-                      <div className="action-title">Crear Empresa</div>
-                      <div className="action-subtitle">Nueva empresa para gestionar</div>
-                    </div>
-                  </button>
-                  
-                  <button 
-                    className="main-action-btn secondary"
-                    onClick={() => handleViewChange('mis-empresas')}
-                  >
-                    <div className="action-icon">📋</div>
-                    <div className="action-content">
-                      <div className="action-title">Gestionar Empresas</div>
-                      <div className="action-subtitle">Ver y editar empresas existentes</div>
-                    </div>
-                  </button>
-                </div>
-              </div>
-
-              <div className="dashboard-card system-card">
-                <div className="card-header">
-                  <h3>ℹ️ Información del Sistema</h3>
-                  <span className="card-subtitle">Estado y configuración</span>
-                </div>
-                <div className="system-info">
-                  <div className="system-item">
-                    <span className="system-icon">🔐</span>
-                    <div className="system-content">
-                      <div className="system-label">Autenticación</div>
-                      <div className="system-value">JWT Token Activo</div>
-                    </div>
-                  </div>
-                  <div className="system-item">
-                    <span className="system-icon">🌐</span>
-                    <div className="system-content">
-                      <div className="system-label">Servidor</div>
-                      <div className="system-value">Conectado</div>
-                    </div>
-                  </div>
-                  <div className="system-item">
-                    <span className="system-icon">📅</span>
-                    <div className="system-content">
-                      <div className="system-label">Último acceso</div>
-                      <div className="system-value">{new Date().toLocaleDateString()}</div>
-                    </div>
-                  </div>
-                  <div className="system-item">
-                    <span className="system-icon">⚡</span>
-                    <div className="system-content">
-                      <div className="system-label">Estado</div>
-                      <div className="system-value">
-                        <span className="status-badge active">Activo</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            </div>
-          </div>
-        );
-
       case 'crear-empresa':
         return <CrearEmpresa key="crear-empresa" onViewChange={handleViewChange} />;
       case 'editar-empresa':
@@ -265,31 +160,26 @@ function Dashboard() {
       case 'configuracion-empresa':
         return <ConfiguracionEmpresa empresaId={empresaParaConfigurar} onViewChange={handleViewChange} />;
       case 'gestionar-empresa':
-        return <GestionarEmpresa empresaId={empresaParaGestionar} onViewChange={handleViewChange} />;
+        return (
+          <GestionarEmpresa 
+            empresaId={empresaParaGestionar} 
+            onViewChange={handleViewChange}
+            onEmpresaLoaded={setEmpresaSeleccionada}
+          />
+        );
       case 'mis-empresas':
-        return <ListaEmpresas onViewChange={handleViewChange} onEmpresaSelect={setEmpresaSeleccionada} />;
+        return (
+          <ListaEmpresas 
+            onViewChange={handleViewChange} 
+            onEmpresaSelect={setEmpresaSeleccionada}
+          />
+        );
       case 'admin':
         return <AdminPanel onViewChange={handleViewChange} />;
       case 'configuracion':
         return <ConfiguracionUsuario onViewChange={handleViewChange} />;
       default:
-        return (
-          <div className="dashboard-content">
-            <div className="dashboard-grid">
-              <div className="dashboard-card">
-                <h3>👤 Mi Perfil</h3>
-                <div className="profile-info">
-                  <div className="info-item">
-                    <strong>Usuario:</strong> {user?.username || 'No disponible'}
-                  </div>
-                  <div className="info-item">
-                    <strong>Email:</strong> {user?.email || 'No disponible'}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
+        return <ListaEmpresas onViewChange={handleViewChange} onEmpresaSelect={setEmpresaSeleccionada} />;
     }
   };
 
@@ -300,6 +190,7 @@ function Dashboard() {
         onLogout={logout}
         onMenuToggle={handleMenuToggle}
         isSidebarOpen={isSidebarOpen}
+        empresaActiva={empresaSeleccionada}
       />
       {/* Overlay para móvil cuando sidebar está abierto */}
       <div 

@@ -67,20 +67,14 @@ class EmpresaCreate(BaseModel):
     direccion: str  # Obligatorio
     codigo_departamento: str  # Obligatorio
     codigo_ciudad: str  # Obligatorio
-    configuracion_comprobantes: dict = None
-    configuracion_comprobantes_compras: dict = None
-    registro_cuentas: dict = None
-    registro_cuentas_ventas: dict = None
-    registro_cuentas_compras: dict = None
-    registro_cuentas_factura_venta: dict = None
-    registro_cuentas_nota_credito: dict = None
-    registro_cuentas_factura_compra: dict = None
-    registro_cuentas_nota_credito_compra: dict = None
+    # Los comprobantes se guardan en la tabla tipos_comprobantes
+    configuracion_comprobantes: dict = None  # Para compatibilidad, se migra a tipos_comprobantes
+    configuracion_comprobantes_compras: dict = None  # Para compatibilidad, se migra a tipos_comprobantes
 
 class ConfiguracionEmpresa(BaseModel):
-    configuracion_comprobantes: dict = None
-    configuracion_comprobantes_compras: dict = None
-    registro_cuentas: dict = None
+    # Los comprobantes se guardan en la tabla tipos_comprobantes
+    configuracion_comprobantes: dict = None  # Para compatibilidad, se migra a tipos_comprobantes
+    configuracion_comprobantes_compras: dict = None  # Para compatibilidad, se migra a tipos_comprobantes
 
 class EmpresaResponse(BaseModel):
     id: int
@@ -132,52 +126,9 @@ async def crear_empresa(
             "nota_debito": {"activo": False, "codigo": ""}
         }
         
-        # Registro por defecto de cuentas de ventas - vacío para que el contador configure
-        registro_ventas_default = {
-            "cuenta_1": {"codigo": "", "nombre": "", "activo": False, "naturaleza": "debito"},
-            "cuenta_2": {"codigo": "", "nombre": "", "activo": False, "naturaleza": "debito"},
-            "cuenta_3": {"codigo": "", "nombre": "", "activo": False, "naturaleza": "debito"},
-            "cuenta_4": {"codigo": "", "nombre": "", "activo": False, "naturaleza": "debito"},
-            "cuenta_5": {"codigo": "", "nombre": "", "activo": False, "naturaleza": "debito"}
-        }
-        
-        # Registro por defecto de cuentas de compras - vacío para que el contador configure
-        registro_compras_default = {
-            "cuenta_1": {"codigo": "", "nombre": "", "activo": False, "naturaleza": "debito"},
-            "cuenta_2": {"codigo": "", "nombre": "", "activo": False, "naturaleza": "debito"},
-            "cuenta_3": {"codigo": "", "nombre": "", "activo": False, "naturaleza": "debito"},
-            "cuenta_4": {"codigo": "", "nombre": "", "activo": False, "naturaleza": "debito"},
-            "cuenta_5": {"codigo": "", "nombre": "", "activo": False, "naturaleza": "debito"}
-        }
-        
         # Usar configuración proporcionada o la por defecto
         config_comprobantes = empresa.configuracion_comprobantes if empresa.configuracion_comprobantes else config_default
         config_comprobantes_compras = empresa.configuracion_comprobantes_compras if empresa.configuracion_comprobantes_compras else config_compras_default
-        registro_cuentas_ventas = empresa.registro_cuentas_ventas if empresa.registro_cuentas_ventas else registro_ventas_default
-        registro_cuentas_compras = empresa.registro_cuentas_compras if empresa.registro_cuentas_compras else registro_compras_default
-        
-        # Crear nueva empresa
-        # Datos por defecto para las nuevas secciones
-        registro_factura_venta = empresa.registro_cuentas_factura_venta or {
-            f"cuenta_{i}": {"codigo": "", "nombre": "", "activo": False, "naturaleza": "debito"}
-            for i in range(1, 11)
-        }
-        
-        registro_nota_credito = empresa.registro_cuentas_nota_credito or {
-            f"cuenta_{i}": {"codigo": "", "nombre": "", "activo": False, "naturaleza": "debito"}
-            for i in range(1, 11)
-        }
-        
-        # Datos por defecto para las nuevas secciones de compras
-        registro_factura_compra = empresa.registro_cuentas_factura_compra or {
-            f"cuenta_{i}": {"codigo": "", "nombre": "", "activo": False, "naturaleza": "debito"}
-            for i in range(1, 11)
-        }
-        
-        registro_nota_credito_compra = empresa.registro_cuentas_nota_credito_compra or {
-            f"cuenta_{i}": {"codigo": "", "nombre": "", "activo": False, "naturaleza": "debito"}
-            for i in range(1, 11)
-        }
 
         nueva_empresa = Empresa(
             nit=empresa.nit,
@@ -189,15 +140,6 @@ async def crear_empresa(
             codigo_pais='Co',  # Colombia por defecto
             codigo_departamento=empresa.codigo_departamento,
             codigo_ciudad=empresa.codigo_ciudad,
-            # Ya no guardamos configuracion_comprobantes en JSON - se guarda en la tabla tipos_comprobantes
-            configuracion_comprobantes=None,
-            configuracion_comprobantes_compras=None,
-            registro_cuentas_ventas=json.dumps(registro_cuentas_ventas),
-            registro_cuentas_compras=json.dumps(registro_cuentas_compras),
-            registro_cuentas_factura_venta=json.dumps(registro_factura_venta),
-            registro_cuentas_nota_credito=json.dumps(registro_nota_credito),
-            registro_cuentas_factura_compra=json.dumps(registro_factura_compra),
-            registro_cuentas_nota_credito_compra=json.dumps(registro_nota_credito_compra),
             usuario_id=current_user.id
         )
 
@@ -446,29 +388,8 @@ async def actualizar_empresa(
             except Exception as e:
                 logger.warning(f"⚠️ Error actualizando comprobantes de compras: {e}")
         
-        # Actualizar registro de cuentas de ventas si se proporciona
-        if empresa.registro_cuentas_ventas is not None:
-            empresa_actual.registro_cuentas_ventas = json.dumps(empresa.registro_cuentas_ventas)
-        
-        # Actualizar registro de cuentas de compras si se proporciona
-        if empresa.registro_cuentas_compras is not None:
-            empresa_actual.registro_cuentas_compras = json.dumps(empresa.registro_cuentas_compras)
-        
-        # Actualizar registro de cuentas de factura de venta si se proporciona
-        if empresa.registro_cuentas_factura_venta is not None:
-            empresa_actual.registro_cuentas_factura_venta = json.dumps(empresa.registro_cuentas_factura_venta)
-        
-        # Actualizar registro de cuentas de nota crédito si se proporciona
-        if empresa.registro_cuentas_nota_credito is not None:
-            empresa_actual.registro_cuentas_nota_credito = json.dumps(empresa.registro_cuentas_nota_credito)
-        
-        # Actualizar registro de cuentas de factura de compra si se proporciona
-        if empresa.registro_cuentas_factura_compra is not None:
-            empresa_actual.registro_cuentas_factura_compra = json.dumps(empresa.registro_cuentas_factura_compra)
-        
-        # Actualizar registro de cuentas de nota crédito de compra si se proporciona
-        if empresa.registro_cuentas_nota_credito_compra is not None:
-            empresa_actual.registro_cuentas_nota_credito_compra = json.dumps(empresa.registro_cuentas_nota_credito_compra)
+        # Las cuentas ahora se gestionan en la tabla cuentas_importadas
+        # No se actualizan aquí
 
         db.commit()
         db.refresh(empresa_actual)
@@ -580,8 +501,8 @@ async def actualizar_configuracion_empresa(
                 logger.warning(f"⚠️ Error actualizando comprobantes de compras: {e}")
         
         # Actualizar registro de cuentas si se proporciona
-        if configuracion.registro_cuentas is not None:
-            empresa.registro_cuentas = json.dumps(configuracion.registro_cuentas)
+        # Las cuentas ahora se gestionan en la tabla cuentas_importadas
+        # No se actualizan aquí
 
         db.commit()
         db.refresh(empresa)

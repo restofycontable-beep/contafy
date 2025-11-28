@@ -2,7 +2,7 @@ import React from 'react';
 
 const RepresentanteLegal = ({ formData, handleInputChange, loading }) => {
   return (
-    <div className="form-section">
+    <div className="form-section" style={{ width: '100%', boxSizing: 'border-box' }}>
       <h3>👤 Representante Legal</h3>
       
       <div className="form-group">

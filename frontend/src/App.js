@@ -22,7 +22,7 @@ function App() {
               <Route path="/gestionar-empresa/:id" element={<Dashboard />} />
               <Route path="/configuracion" element={<Dashboard />} />
               <Route path="/admin" element={<Dashboard />} />
-              <Route path="*" element={<Navigate to="/dashboard" replace />} />
+              <Route path="*" element={<Navigate to="/mis-empresas" replace />} />
             </Routes>
           </ProtectedRoute>
         </div>

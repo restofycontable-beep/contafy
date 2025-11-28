@@ -2,7 +2,7 @@ import React from 'react';
 
 const InformacionBasica = ({ formData, handleInputChange, loading, isEditing, departamentos, ciudades, loadingDepartamentos, loadingCiudades }) => {
   return (
-    <div className="form-section">
+    <div className="form-section" style={{ width: '100%', boxSizing: 'border-box' }}>
       <h3>🏢 Información de la Empresa</h3>
       
       <div className="form-group">
