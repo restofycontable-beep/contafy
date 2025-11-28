@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import SearchBar from '../../components/shared/SearchBar';
-import SectionBanner from '../../components/shared/SectionBanner';
 import { useAuth } from '../../contexts/AuthContext';
 import { formatearFechaConHora } from '../../utils/dateUtils';
 import { formatearTamano } from '../../utils/formatUtils';
@@ -309,20 +308,31 @@ const ListaEmpresas = ({ onViewChange, onEmpresaSelect }) => {
 
   return (
     <div className="empresas-container">
-      <SectionBanner 
-        title="MIS EMPRESAS"
-        subtitle="Gestiona y administra todas tus empresas registradas"
-        icon="📋"
-      >
-        <button 
-          className="btn btn-primary"
-          onClick={() => onViewChange && onViewChange('crear-empresa')}
-        >
-          ➕ Crear Empresa
-        </button>
-      </SectionBanner>
+      <div className="empresas-header-banner">
+        <div className="welcome-section">
+          <h1 className="empresas-title">📋 MIS EMPRESAS</h1>
+          <p className="empresas-subtitle">
+            Gestiona y administra todas tus empresas registradas
+          </p>
+        </div>
+      </div>
 
       <div className="empresa-form-card">
+        <div className="empresas-header">
+          <div className="empresas-header-top">
+            <div className="empresas-header-title">
+              <h2>Gestión de Empresas</h2>
+              <p>Administra todas tus empresas registradas en el sistema</p>
+            </div>
+            <button 
+              className="btn btn-primary"
+              onClick={() => onViewChange && onViewChange('crear-empresa')}
+            >
+              ➕ Crear Empresa
+            </button>
+          </div>
+        </div>
+
         <SearchBar
           placeholder="Buscar empresa por nombre, NIT o representante..."
           value={terminoBusqueda}
