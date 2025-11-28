@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import RestofyService from '../services/restofyService';
-import '../styles/facturas-electronicas.css';
-import { obtenerCredencialesRestofy } from '../utils/restofyUtils';
+import { useAuth } from '../../contexts/AuthContext';
+import RestofyService from '../../services/restofyService';
+import '../../styles/facturas-electronicas.css';
+import { obtenerCredencialesRestofy } from '../../utils/restofyUtils';
 
 const FacturasElectronicas = ({ empresaId, empresa }) => {
   const { token } = useAuth();

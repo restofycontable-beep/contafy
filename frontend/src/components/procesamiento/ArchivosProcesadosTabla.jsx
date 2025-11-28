@@ -1,6 +1,6 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
-import ProcesamientoService from '../services/procesamientoService';
-import '../styles/archivos-procesados-tabla.css';
+import ProcesamientoService from '../../services/procesamientoService';
+import '../../styles/archivos-procesados-tabla.css';
 
 const ArchivosProcesadosTabla = forwardRef((props, ref) => {
     const [archivos, setArchivos] = useState([]);

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
+import NuevoDocumentoModal from '../../components/procesamiento/NuevoDocumentoModal';
+import RestofyPanel from '../../components/restofy/RestofyPanel';
+import { useAuth } from '../../contexts/AuthContext';
 import './GestionarEmpresa.css';
-import NuevoDocumentoModal from './NuevoDocumentoModal';
-import RestofyPanel from './restofy/RestofyPanel';
 
 const GestionarEmpresa = ({ empresaId, onViewChange }) => {
   const { token } = useAuth();

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import FacturasElectronicas from '../FacturasElectronicas';
-import Tabs from '../Tabs';
+import FacturasElectronicas from '../../pages/Empresas/FacturasElectronicas';
+import Tabs from '../shared/Tabs';
 import CategoriasRestofy from './CategoriasRestofy';
 import ItemsFacturasRestofy from './ItemsFacturasRestofy';
 import ProductosRestofy from './ProductosRestofy';

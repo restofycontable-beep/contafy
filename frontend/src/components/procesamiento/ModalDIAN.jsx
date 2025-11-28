@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import DianService from "../services/dianService";
-import "../styles/procesamiento.css";
+import DianService from "../../services/dianService";
+import "../../styles/procesamiento.css";
 import ProcesamientoPanel from "./ProcesamientoPanel";
 import ResultadosTabla from "./ResultadosTabla";
 

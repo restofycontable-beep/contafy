@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import '../styles/modal-nuevo-documento.css';
+import { useAuth } from '../../contexts/AuthContext';
+import '../../styles/modal-nuevo-documento.css';
 
 const NuevoDocumentoModal = ({ isOpen, onClose, onSuccess, empresaSeleccionada }) => {
     const { token } = useAuth();

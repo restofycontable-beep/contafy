@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../../contexts/AuthContext';
 
-import AdminPanel from './AdminPanel';
-import ConfiguracionEmpresa from './ConfiguracionEmpresa';
-import ConfiguracionUsuario from './ConfiguracionUsuario';
-import CrearEmpresa from './CrearEmpresa';
+import Header from '../../components/shared/Header';
+import Sidebar from '../../components/shared/Sidebar';
+import AdminPanel from '../Admin/AdminPanel';
+import ConfiguracionUsuario from '../Configuracion/ConfiguracionUsuario';
+import ConfiguracionEmpresa from '../Empresas/ConfiguracionEmpresa';
+import CrearEmpresa from '../Empresas/CrearEmpresa';
+import GestionarEmpresa from '../Empresas/GestionarEmpresa';
+import ListaEmpresas from '../Empresas/ListaEmpresas';
 import './Dashboard.css';
-import GestionarEmpresa from './GestionarEmpresa';
-import Header from './Header';
-import ListaEmpresas from './ListaEmpresas';
-
-import Sidebar from './Sidebar';
 
 function Dashboard() {
   const { user, logout } = useAuth();

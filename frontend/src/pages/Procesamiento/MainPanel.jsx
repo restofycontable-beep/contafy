@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
-import "../styles/main-panel.css";
-import ArchivosProcesadosTabla from "./ArchivosProcesadosTabla";
-import NuevoDocumentoModal from "./NuevoDocumentoModal";
+import ArchivosProcesadosTabla from "../../components/procesamiento/ArchivosProcesadosTabla";
+import NuevoDocumentoModal from "../../components/procesamiento/NuevoDocumentoModal";
+import "../../styles/main-panel.css";
 
 const MainPanel = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);

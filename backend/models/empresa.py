@@ -64,6 +64,7 @@ class Empresa(BaseModel):
     archivos_procesados = relationship("ArchivoProcesado", back_populates="empresa", cascade="all, delete-orphan")
     archivos_zip_generados = relationship("ArchivoZipGenerado", back_populates="empresa", cascade="all, delete-orphan")
     cuentas_importadas = relationship("CuentaImportada", back_populates="empresa", cascade="all, delete-orphan")
+    tipos_comprobantes = relationship("TipoComprobante", back_populates="empresa", cascade="all, delete-orphan")
     
     def __repr__(self):
         return f"<Empresa(nit='{self.nit}', razon_social='{self.razon_social}')>"

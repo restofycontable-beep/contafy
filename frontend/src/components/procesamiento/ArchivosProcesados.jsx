@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import '../styles/archivos-procesados.css';
+import '../../styles/archivos-procesados.css';
 
 const ArchivosProcesados = () => {
   const [archivos, setArchivos] = useState([]);

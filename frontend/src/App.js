@@ -1,10 +1,10 @@
 import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
-import Dashboard from "./components/Dashboard.jsx";
-import ErrorBoundary from "./components/ErrorBoundary";
-import ProtectedRoute from "./components/ProtectedRoute";
+import ErrorBoundary from "./components/shared/ErrorBoundary";
+import ProtectedRoute from "./components/shared/ProtectedRoute";
 import { AuthProvider } from "./contexts/AuthContext";
 import "./index.css";
+import Dashboard from "./pages/Dashboard/Dashboard.jsx";
 
 function App() {
   return (

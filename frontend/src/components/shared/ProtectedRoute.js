@@ -1,6 +1,6 @@
 import React from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import AuthContainer from './AuthContainer';
+import { useAuth } from '../../contexts/AuthContext';
+import AuthContainer from '../auth/AuthContainer';
 import './ProtectedRoute.css';
 
 const ProtectedRoute = ({ children }) => {

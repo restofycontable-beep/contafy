@@ -6,6 +6,7 @@ from typing import List
 from models.user import User
 from models.empresa import Empresa
 from services.auth_service import get_current_user
+from services.tipo_comprobante_service import TipoComprobanteService
 from config.database import get_db
 from pydantic import BaseModel
 import logging
@@ -198,8 +199,9 @@ async def crear_empresa(
             vinculada_restofy=empresa.vinculada_restofy if hasattr(empresa, 'vinculada_restofy') else False,
             token_restofysas=empresa.token_restofysas,
             url_restofy=empresa.url_restofy,
-            configuracion_comprobantes=json.dumps(config_comprobantes),
-            configuracion_comprobantes_compras=json.dumps(config_comprobantes_compras),
+            # Ya no guardamos configuracion_comprobantes en JSON - se guarda en la tabla tipos_comprobantes
+            configuracion_comprobantes=None,
+            configuracion_comprobantes_compras=None,
             registro_cuentas_ventas=json.dumps(registro_cuentas_ventas),
             registro_cuentas_compras=json.dumps(registro_cuentas_compras),
             registro_cuentas_factura_venta=json.dumps(registro_factura_venta),
@@ -215,6 +217,65 @@ async def crear_empresa(
         db.refresh(nueva_empresa)
         
         logger.info(f"✅ Empresa creada exitosamente con ID: {nueva_empresa.id}")
+        
+        # Guardar comprobantes en la nueva tabla tipos_comprobantes
+        if config_comprobantes:
+            try:
+                service_comprobantes = TipoComprobanteService(db)
+                for tipo, config in config_comprobantes.items():
+                    if tipo in ['factura', 'nota_credito', 'nota_debito']:
+                        try:
+                            service_comprobantes.crear_comprobante(
+                                empresa_id=nueva_empresa.id,
+                                tipo_comprobante=tipo,
+                                categoria='venta',
+                                codigo=config.get('codigo', ''),
+                                activo=config.get('activo', False)
+                            )
+                        except ValueError:
+                            # Ya existe, actualizar
+                            existente = service_comprobantes.obtener_comprobante_por_tipo(
+                                nueva_empresa.id, tipo, 'venta'
+                            )
+                            if existente:
+                                service_comprobantes.actualizar_comprobante(
+                                    existente.id,
+                                    nueva_empresa.id,
+                                    codigo=config.get('codigo', ''),
+                                    activo=config.get('activo', False)
+                                )
+                logger.info("✅ Comprobantes de ventas guardados en la nueva tabla")
+            except Exception as e:
+                logger.warning(f"⚠️ Error guardando comprobantes de ventas: {e}")
+        
+        if config_comprobantes_compras:
+            try:
+                service_comprobantes = TipoComprobanteService(db)
+                for tipo, config in config_comprobantes_compras.items():
+                    if tipo in ['factura', 'nota_credito', 'nota_debito']:
+                        try:
+                            service_comprobantes.crear_comprobante(
+                                empresa_id=nueva_empresa.id,
+                                tipo_comprobante=tipo,
+                                categoria='compra',
+                                codigo=config.get('codigo', ''),
+                                activo=config.get('activo', False)
+                            )
+                        except ValueError:
+                            # Ya existe, actualizar
+                            existente = service_comprobantes.obtener_comprobante_por_tipo(
+                                nueva_empresa.id, tipo, 'compra'
+                            )
+                            if existente:
+                                service_comprobantes.actualizar_comprobante(
+                                    existente.id,
+                                    nueva_empresa.id,
+                                    codigo=config.get('codigo', ''),
+                                    activo=config.get('activo', False)
+                                )
+                logger.info("✅ Comprobantes de compras guardados en la nueva tabla")
+            except Exception as e:
+                logger.warning(f"⚠️ Error guardando comprobantes de compras: {e}")
 
         return JSONResponse(
             content={
@@ -343,14 +404,64 @@ async def actualizar_empresa(
             empresa_actual.token_restofysas = empresa.token_restofysas
         if empresa.url_restofy is not None:
             empresa_actual.url_restofy = empresa.url_restofy
-        # Actualizar configuración de comprobantes si se proporciona
+        # Actualizar comprobantes en la nueva tabla tipos_comprobantes (no en JSON)
         if empresa.configuracion_comprobantes is not None:
-            import json
-            empresa_actual.configuracion_comprobantes = json.dumps(empresa.configuracion_comprobantes)
+            try:
+                service_comprobantes = TipoComprobanteService(db)
+                for tipo, config in empresa.configuracion_comprobantes.items():
+                    if tipo in ['factura', 'nota_credito', 'nota_debito']:
+                        try:
+                            service_comprobantes.crear_comprobante(
+                                empresa_id=empresa_actual.id,
+                                tipo_comprobante=tipo,
+                                categoria='venta',
+                                codigo=config.get('codigo', ''),
+                                activo=config.get('activo', False)
+                            )
+                        except ValueError:
+                            # Ya existe, actualizar
+                            existente = service_comprobantes.obtener_comprobante_por_tipo(
+                                empresa_actual.id, tipo, 'venta'
+                            )
+                            if existente:
+                                service_comprobantes.actualizar_comprobante(
+                                    existente.id,
+                                    empresa_actual.id,
+                                    codigo=config.get('codigo', ''),
+                                    activo=config.get('activo', False)
+                                )
+                logger.info("✅ Comprobantes de ventas actualizados en la nueva tabla")
+            except Exception as e:
+                logger.warning(f"⚠️ Error actualizando comprobantes de ventas: {e}")
         
-        # Actualizar configuración de comprobantes de compras si se proporciona
         if empresa.configuracion_comprobantes_compras is not None:
-            empresa_actual.configuracion_comprobantes_compras = json.dumps(empresa.configuracion_comprobantes_compras)
+            try:
+                service_comprobantes = TipoComprobanteService(db)
+                for tipo, config in empresa.configuracion_comprobantes_compras.items():
+                    if tipo in ['factura', 'nota_credito', 'nota_debito']:
+                        try:
+                            service_comprobantes.crear_comprobante(
+                                empresa_id=empresa_actual.id,
+                                tipo_comprobante=tipo,
+                                categoria='compra',
+                                codigo=config.get('codigo', ''),
+                                activo=config.get('activo', False)
+                            )
+                        except ValueError:
+                            # Ya existe, actualizar
+                            existente = service_comprobantes.obtener_comprobante_por_tipo(
+                                empresa_actual.id, tipo, 'compra'
+                            )
+                            if existente:
+                                service_comprobantes.actualizar_comprobante(
+                                    existente.id,
+                                    empresa_actual.id,
+                                    codigo=config.get('codigo', ''),
+                                    activo=config.get('activo', False)
+                                )
+                logger.info("✅ Comprobantes de compras actualizados en la nueva tabla")
+            except Exception as e:
+                logger.warning(f"⚠️ Error actualizando comprobantes de compras: {e}")
         
         # Actualizar registro de cuentas de ventas si se proporciona
         if empresa.registro_cuentas_ventas is not None:
@@ -433,8 +544,65 @@ async def actualizar_configuracion_empresa(
             empresa.url_restofy = configuracion.url_restofy
 
         # Actualizar configuración de comprobantes si se proporciona
+        # Actualizar comprobantes en la nueva tabla tipos_comprobantes (no en JSON)
         if configuracion.configuracion_comprobantes is not None:
-            empresa.configuracion_comprobantes = json.dumps(configuracion.configuracion_comprobantes)
+            try:
+                service_comprobantes = TipoComprobanteService(db)
+                for tipo, config in configuracion.configuracion_comprobantes.items():
+                    if tipo in ['factura', 'nota_credito', 'nota_debito']:
+                        try:
+                            service_comprobantes.crear_comprobante(
+                                empresa_id=empresa.id,
+                                tipo_comprobante=tipo,
+                                categoria='venta',
+                                codigo=config.get('codigo', ''),
+                                activo=config.get('activo', False)
+                            )
+                        except ValueError:
+                            # Ya existe, actualizar
+                            existente = service_comprobantes.obtener_comprobante_por_tipo(
+                                empresa.id, tipo, 'venta'
+                            )
+                            if existente:
+                                service_comprobantes.actualizar_comprobante(
+                                    existente.id,
+                                    empresa.id,
+                                    codigo=config.get('codigo', ''),
+                                    activo=config.get('activo', False)
+                                )
+                logger.info("✅ Comprobantes de ventas actualizados en la nueva tabla")
+            except Exception as e:
+                logger.warning(f"⚠️ Error actualizando comprobantes de ventas: {e}")
+        
+        # Actualizar comprobantes de compras en la nueva tabla tipos_comprobantes
+        if hasattr(configuracion, 'configuracion_comprobantes_compras') and configuracion.configuracion_comprobantes_compras is not None:
+            try:
+                service_comprobantes = TipoComprobanteService(db)
+                for tipo, config in configuracion.configuracion_comprobantes_compras.items():
+                    if tipo in ['factura', 'nota_credito', 'nota_debito']:
+                        try:
+                            service_comprobantes.crear_comprobante(
+                                empresa_id=empresa.id,
+                                tipo_comprobante=tipo,
+                                categoria='compra',
+                                codigo=config.get('codigo', ''),
+                                activo=config.get('activo', False)
+                            )
+                        except ValueError:
+                            # Ya existe, actualizar
+                            existente = service_comprobantes.obtener_comprobante_por_tipo(
+                                empresa.id, tipo, 'compra'
+                            )
+                            if existente:
+                                service_comprobantes.actualizar_comprobante(
+                                    existente.id,
+                                    empresa.id,
+                                    codigo=config.get('codigo', ''),
+                                    activo=config.get('activo', False)
+                                )
+                logger.info("✅ Comprobantes de compras actualizados en la nueva tabla")
+            except Exception as e:
+                logger.warning(f"⚠️ Error actualizando comprobantes de compras: {e}")
         
         # Actualizar registro de cuentas si se proporciona
         if configuracion.registro_cuentas is not None:

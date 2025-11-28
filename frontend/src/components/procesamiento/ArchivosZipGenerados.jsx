@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import '../styles/ArchivosZipGenerados.css';
+import { useAuth } from '../../contexts/AuthContext';
+import '../../styles/ArchivosZipGenerados.css';
 
 const ArchivosZipGenerados = () => {
   const { token } = useAuth();

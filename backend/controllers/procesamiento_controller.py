@@ -42,21 +42,37 @@ class ProcesamientoController:
                     detail=f"Empresa con NIT {nit_empresa} no encontrada"
                 )
             
-            # Obtener configuración de comprobantes de ventas
+            # Obtener configuración de comprobantes de ventas (prioridad: tabla, fallback: JSON)
             configuracion_comprobantes = None
-            if empresa.configuracion_comprobantes:
+            from services.tipo_comprobante_service import TipoComprobanteService
+            service_comprobantes = TipoComprobanteService(db)
+            
+            # Intentar obtener de la tabla primero
+            comprobantes_ventas = service_comprobantes.obtener_comprobantes_empresa(empresa.id, 'venta')
+            if comprobantes_ventas:
+                # Convertir de tabla a formato JSON (compatibilidad)
+                configuracion_comprobantes = service_comprobantes.convertir_a_formato_json(empresa.id, 'venta')
+                logger.info(f"📋 Configuración de comprobantes de ventas cargada desde tabla: {configuracion_comprobantes}")
+            elif empresa.configuracion_comprobantes:
+                # Fallback a JSON
                 try:
                     configuracion_comprobantes = json.loads(empresa.configuracion_comprobantes)
-                    logger.info(f"📋 Configuración de comprobantes de ventas cargada: {configuracion_comprobantes}")
+                    logger.info(f"📋 Configuración de comprobantes de ventas cargada desde JSON (fallback): {configuracion_comprobantes}")
                 except json.JSONDecodeError:
                     logger.warning(f"⚠️ Error decodificando configuración de comprobantes de ventas para empresa {nit_empresa}")
             
-            # Obtener configuración de comprobantes de compras
+            # Obtener configuración de comprobantes de compras (prioridad: tabla, fallback: JSON)
             configuracion_comprobantes_compras = None
-            if empresa.configuracion_comprobantes_compras:
+            comprobantes_compras = service_comprobantes.obtener_comprobantes_empresa(empresa.id, 'compra')
+            if comprobantes_compras:
+                # Convertir de tabla a formato JSON (compatibilidad)
+                configuracion_comprobantes_compras = service_comprobantes.convertir_a_formato_json(empresa.id, 'compra')
+                logger.info(f"🛒 Configuración de comprobantes de compras cargada desde tabla: {configuracion_comprobantes_compras}")
+            elif empresa.configuracion_comprobantes_compras:
+                # Fallback a JSON
                 try:
                     configuracion_comprobantes_compras = json.loads(empresa.configuracion_comprobantes_compras)
-                    logger.info(f"🛒 Configuración de comprobantes de compras cargada: {configuracion_comprobantes_compras}")
+                    logger.info(f"🛒 Configuración de comprobantes de compras cargada desde JSON (fallback): {configuracion_comprobantes_compras}")
                 except json.JSONDecodeError:
                     logger.warning(f"⚠️ Error decodificando configuración de comprobantes de compras para empresa {nit_empresa}")
             

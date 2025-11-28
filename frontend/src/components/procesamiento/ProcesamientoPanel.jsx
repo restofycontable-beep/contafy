@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import ProcesamientoService from "../services/procesamientoService";
-import "../styles/procesamiento-panel.css";
+import ProcesamientoService from "../../services/procesamientoService";
+import "../../styles/procesamiento-panel.css";
 
 const ProcesamientoPanel = ({ documentos, onProcesarCompleto, empresaSeleccionada }) => {
   const [loading, setLoading] = useState(false);

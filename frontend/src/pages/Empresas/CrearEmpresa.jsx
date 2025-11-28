@@ -1,17 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import RestofyService from '../services/restofyService';
+import ComprobantesCompras from '../../components/empresa/ComprobantesCompras';
+import ComprobantesVentas from '../../components/empresa/ComprobantesVentas';
+import ConfiguracionRestofy from '../../components/empresa/ConfiguracionRestofy';
+import CuentasContables from '../../components/empresa/CuentasContables';
+import InformacionBasica from '../../components/empresa/InformacionBasica';
+import RepresentanteLegal from '../../components/empresa/RepresentanteLegal';
+import Tabs from '../../components/shared/Tabs';
+import { useAuth } from '../../contexts/AuthContext';
+import ComprobanteService from '../../services/comprobanteService';
+import RestofyService from '../../services/restofyService';
 import './CrearEmpresa.css';
-import Tabs from './Tabs';
-import ComprobantesCompras from './empresa/ComprobantesCompras';
-import ComprobantesVentas from './empresa/ComprobantesVentas';
-import ConfiguracionRestofy from './empresa/ConfiguracionRestofy';
-import CuentasContables from './empresa/CuentasContables';
-import InformacionBasica from './empresa/InformacionBasica';
-import RepresentanteLegal from './empresa/RepresentanteLegal';
 
 const CrearEmpresa = ({ empresaId, onViewChange }) => {
-  const { getAuthHeaders, fetchWithAuth } = useAuth();
+  const { getAuthHeaders, fetchWithAuth, token } = useAuth();
   const isEditing = !!empresaId;
   
   // Estados para ubicaciones
@@ -189,6 +190,28 @@ const CrearEmpresa = ({ empresaId, onViewChange }) => {
 
       if (response.ok && data.success && data.data) {
         const empresa = data.data;
+        
+        // Cargar comprobantes desde la nueva tabla
+        const comprobantesVentas = await ComprobanteService.getComprobantes(empresaId, 'venta', token);
+        const comprobantesCompras = await ComprobanteService.getComprobantes(empresaId, 'compra', token);
+        
+        // Convertir comprobantes de la tabla al formato JSON (para compatibilidad con el formulario)
+        const configVentas = comprobantesVentas.success && comprobantesVentas.data.length > 0
+          ? ComprobanteService.convertToJsonFormat(comprobantesVentas.data)
+          : (empresa.configuracion_comprobantes || {
+              factura: { activo: true, codigo: '01' },
+              nota_credito: { activo: true, codigo: '91' },
+              nota_debito: { activo: true, codigo: '92' }
+            });
+        
+        const configCompras = comprobantesCompras.success && comprobantesCompras.data.length > 0
+          ? ComprobanteService.convertToJsonFormat(comprobantesCompras.data)
+          : (empresa.configuracion_comprobantes_compras || {
+              factura: { activo: true, codigo: '01' },
+              nota_credito: { activo: true, codigo: '91' },
+              nota_debito: { activo: true, codigo: '92' }
+            });
+        
         setFormData({
           nit: empresa.nit || '',
           razon_social: empresa.razon_social || '',
@@ -201,16 +224,8 @@ const CrearEmpresa = ({ empresaId, onViewChange }) => {
           vinculada_restofy: empresa.vinculada_restofy || false,
           token_restofysas: empresa.token_restofysas || '',
           url_restofy: empresa.url_restofy || '',
-          configuracion_comprobantes: empresa.configuracion_comprobantes || {
-            factura: { activo: true, codigo: '01' },
-            nota_credito: { activo: true, codigo: '91' },
-            nota_debito: { activo: true, codigo: '92' }
-          },
-          configuracion_comprobantes_compras: empresa.configuracion_comprobantes_compras || {
-            factura: { activo: true, codigo: '01' },
-            nota_credito: { activo: true, codigo: '91' },
-            nota_debito: { activo: true, codigo: '92' }
-          },
+          configuracion_comprobantes: configVentas,
+          configuracion_comprobantes_compras: configCompras,
           // Campos legacy eliminados - solo usamos las secciones específicas
           // Nuevas secciones para el grupo de ventas
           registro_cuentas_factura_venta: empresa.registro_cuentas_factura_venta || {
@@ -1214,10 +1229,102 @@ const CrearEmpresa = ({ empresaId, onViewChange }) => {
       }
 
       if (response.ok && (data.success || data.data)) {
+        const empresaGuardadaId = data.data?.id || empresaId;
         console.log('✅ CrearEmpresa: Empresa guardada exitosamente', {
           isEditing,
-          empresaId: data.data?.id || empresaId
+          empresaId: empresaGuardadaId
         });
+
+        // Guardar comprobantes en la nueva tabla
+        try {
+          // Guardar comprobantes de ventas
+          const tiposVentas = ['factura', 'nota_credito', 'nota_debito'];
+          for (const tipo of tiposVentas) {
+            const comprobante = formData.configuracion_comprobantes?.[tipo];
+            if (comprobante) {
+              // Buscar si ya existe
+              const comprobantesExistentes = await ComprobanteService.getComprobantes(
+                empresaGuardadaId, 
+                'venta', 
+                token
+              );
+              const existente = comprobantesExistentes.data?.find(
+                c => c.tipo_comprobante === tipo && c.categoria === 'venta'
+              );
+              
+              if (existente) {
+                // Actualizar existente
+                await ComprobanteService.updateComprobante(
+                  existente.id,
+                  empresaGuardadaId,
+                  {
+                    codigo: comprobante.codigo || '',
+                    activo: comprobante.activo !== undefined ? comprobante.activo : true
+                  },
+                  token
+                );
+              } else {
+                // Crear nuevo
+                await ComprobanteService.createComprobante(
+                  empresaGuardadaId,
+                  {
+                    tipo_comprobante: tipo,
+                    categoria: 'venta',
+                    codigo: comprobante.codigo || '',
+                    activo: comprobante.activo !== undefined ? comprobante.activo : true
+                  },
+                  token
+                );
+              }
+            }
+          }
+          
+          // Guardar comprobantes de compras
+          const tiposCompras = ['factura', 'nota_credito', 'nota_debito'];
+          for (const tipo of tiposCompras) {
+            const comprobante = formData.configuracion_comprobantes_compras?.[tipo];
+            if (comprobante) {
+              // Buscar si ya existe
+              const comprobantesExistentes = await ComprobanteService.getComprobantes(
+                empresaGuardadaId, 
+                'compra', 
+                token
+              );
+              const existente = comprobantesExistentes.data?.find(
+                c => c.tipo_comprobante === tipo && c.categoria === 'compra'
+              );
+              
+              if (existente) {
+                // Actualizar existente
+                await ComprobanteService.updateComprobante(
+                  existente.id,
+                  empresaGuardadaId,
+                  {
+                    codigo: comprobante.codigo || '',
+                    activo: comprobante.activo !== undefined ? comprobante.activo : true
+                  },
+                  token
+                );
+              } else {
+                // Crear nuevo
+                await ComprobanteService.createComprobante(
+                  empresaGuardadaId,
+                  {
+                    tipo_comprobante: tipo,
+                    categoria: 'compra',
+                    codigo: comprobante.codigo || '',
+                    activo: comprobante.activo !== undefined ? comprobante.activo : true
+                  },
+                  token
+                );
+              }
+            }
+          }
+          console.log('✅ CrearEmpresa: Comprobantes guardados en la nueva tabla');
+        } catch (comprobanteError) {
+          console.error('⚠️ CrearEmpresa: Error guardando comprobantes en la nueva tabla', comprobanteError);
+          // No bloquear el guardado si falla la actualización de comprobantes
+        }
 
         // Si hay credenciales de Restofy, verificar opcionalmente (no bloquea el guardado)
         if (formData.url_restofy && formData.token_restofysas) {

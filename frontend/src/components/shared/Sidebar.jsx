@@ -1,6 +1,6 @@
 import React from "react";
-import { useAuth } from "../contexts/AuthContext";
-import "../styles/sidebar.css";
+import { useAuth } from "../../contexts/AuthContext";
+import "../../styles/sidebar.css";
 
 const Sidebar = ({ activeView, onViewChange, isOpen }) => {
   const { user } = useAuth();
