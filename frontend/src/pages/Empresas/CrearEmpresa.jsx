@@ -1,14 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import ComprobantesCompras from '../../components/empresa/ComprobantesCompras';
 import ComprobantesVentas from '../../components/empresa/ComprobantesVentas';
-import ConfiguracionRestofy from '../../components/empresa/ConfiguracionRestofy';
 import CuentasContables from '../../components/empresa/CuentasContables';
 import InformacionBasica from '../../components/empresa/InformacionBasica';
 import RepresentanteLegal from '../../components/empresa/RepresentanteLegal';
 import Tabs from '../../components/shared/Tabs';
 import { useAuth } from '../../contexts/AuthContext';
 import ComprobanteService from '../../services/comprobanteService';
-import RestofyService from '../../services/restofyService';
 import './CrearEmpresa.css';
 
 const CrearEmpresa = ({ empresaId, onViewChange }) => {
@@ -35,9 +33,6 @@ const CrearEmpresa = ({ empresaId, onViewChange }) => {
     direccion: '',
     codigo_departamento: '',
     codigo_ciudad: '',
-    vinculada_restofy: false,
-    token_restofysas: '',
-    url_restofy: '',
     configuracion_comprobantes: {
       factura: { activo: true, codigo: '01' },
       nota_credito: { activo: true, codigo: '91' },
@@ -133,7 +128,6 @@ const CrearEmpresa = ({ empresaId, onViewChange }) => {
   const tabsOrder = [
     'informacion',
     'representante',
-    'restofy',
     'comprobantes-ventas',
     'comprobantes-compras',
     'cuentas'
@@ -221,9 +215,6 @@ const CrearEmpresa = ({ empresaId, onViewChange }) => {
           direccion: empresa.direccion || '',
           codigo_departamento: empresa.codigo_departamento || '',
           codigo_ciudad: empresa.codigo_ciudad || '',
-          vinculada_restofy: empresa.vinculada_restofy || false,
-          token_restofysas: empresa.token_restofysas || '',
-          url_restofy: empresa.url_restofy || '',
           configuracion_comprobantes: configVentas,
           configuracion_comprobantes_compras: configCompras,
           // Campos legacy eliminados - solo usamos las secciones específicas
@@ -1189,8 +1180,7 @@ const CrearEmpresa = ({ empresaId, onViewChange }) => {
     try {
       console.log('💾 CrearEmpresa: Guardando empresa', {
         isEditing,
-        empresaId: isEditing ? empresaId : 'nueva',
-        tieneRestofy: !!(formData.url_restofy && formData.token_restofysas)
+        empresaId: isEditing ? empresaId : 'nueva'
       });
 
       // Guardar empresa primero
@@ -1326,62 +1316,15 @@ const CrearEmpresa = ({ empresaId, onViewChange }) => {
           // No bloquear el guardado si falla la actualización de comprobantes
         }
 
-        // Si hay credenciales de Restofy, verificar opcionalmente (no bloquea el guardado)
-        if (formData.url_restofy && formData.token_restofysas) {
-          console.log('🔍 CrearEmpresa: Verificando conexión con Restofy (opcional)');
-          
-          try {
-            const verifyResult = await RestofyService.verificarConexion(
-              formData.url_restofy,
-              formData.token_restofysas
-            );
-            
-            if (verifyResult.success) {
-              console.log('✅ CrearEmpresa: Conexión con Restofy verificada exitosamente');
-              setMessage({ 
-                text: isEditing 
-                  ? '✅ Empresa actualizada y conexión con Restofy verificada exitosamente' 
-                  : '✅ Empresa creada y conexión con Restofy verificada exitosamente', 
-                type: 'success' 
-              });
-              // Limpiar el mensaje después de 5 segundos
-              setTimeout(() => {
-                setMessage({ text: '', type: '' });
-              }, 5000);
-            } else {
-              console.warn('⚠️ CrearEmpresa: La conexión con Restofy no se pudo verificar', {
-                error: verifyResult.error
-              });
-              setMessage({ 
-                text: isEditing 
-                  ? `✅ Empresa actualizada. ⚠️ La conexión con Restofy no se pudo verificar: ${verifyResult.error}` 
-                  : `✅ Empresa creada. ⚠️ La conexión con Restofy no se pudo verificar: ${verifyResult.error}`, 
-                type: 'warning' 
-              });
-            }
-          } catch (verifyError) {
-            console.error('❌ CrearEmpresa: Error verificando conexión con Restofy', {
-              error: verifyError.message,
-              stack: verifyError.stack
-            });
-            setMessage({ 
-              text: isEditing 
-                ? '✅ Empresa actualizada. ⚠️ No se pudo verificar la conexión con Restofy' 
-                : '✅ Empresa creada. ⚠️ No se pudo verificar la conexión con Restofy', 
-              type: 'warning' 
-            });
-          }
-        } else {
-          // No hay credenciales de Restofy, solo mostrar mensaje de éxito
-          setMessage({ 
-            text: isEditing ? '✅ Empresa actualizada exitosamente' : '✅ Empresa creada exitosamente', 
-            type: 'success' 
-          });
-          // Limpiar el mensaje después de 5 segundos
-          setTimeout(() => {
-            setMessage({ text: '', type: '' });
-          }, 5000);
-        }
+        // Mostrar mensaje de éxito
+        setMessage({ 
+          text: isEditing ? '✅ Empresa actualizada exitosamente' : '✅ Empresa creada exitosamente', 
+          type: 'success' 
+        });
+        // Limpiar el mensaje después de 5 segundos
+        setTimeout(() => {
+          setMessage({ text: '', type: '' });
+        }, 5000);
         
         if (!isEditing) {
           // Limpiar formulario solo si es creación
@@ -1394,8 +1337,6 @@ const CrearEmpresa = ({ empresaId, onViewChange }) => {
             direccion: '',
             codigo_departamento: '',
             codigo_ciudad: '',
-            token_restofysas: '',
-            url_restofy: '',
             configuracion_comprobantes: {
               factura: { activo: true, codigo: '01' },
               nota_credito: { activo: true, codigo: '91' },
@@ -1773,7 +1714,6 @@ const CrearEmpresa = ({ empresaId, onViewChange }) => {
             tabs={[
               { id: 'informacion', label: 'Información Básica', icon: '🏢' },
               { id: 'representante', label: 'Representante Legal', icon: '👤' },
-              { id: 'restofy', label: 'Restofy', icon: '🔌' },
               { id: 'comprobantes-ventas', label: 'Comprobantes Ventas', icon: '📈' },
               { id: 'comprobantes-compras', label: 'Comprobantes Compras', icon: '🛒' },
               { id: 'cuentas', label: 'Cuentas Contables', icon: '💳' }
@@ -1800,59 +1740,6 @@ const CrearEmpresa = ({ empresaId, onViewChange }) => {
                 handleInputChange={handleInputChange}
                 loading={loading}
               />
-            )}
-
-            {activeTab === 'restofy' && (
-              <>
-                <div className="form-section">
-                  <h3>🔌 Integración con Restofy</h3>
-                  <div className="form-group">
-                    <label style={{ display: 'block', marginBottom: '10px', fontWeight: '500', fontSize: '16px' }}>
-                      ¿Esta empresa está vinculada con Restofy?
-                    </label>
-                    <div style={{ display: 'flex', gap: '20px', alignItems: 'center', marginBottom: '10px' }}>
-                      <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '15px' }}>
-                        <input
-                          type="radio"
-                          name="vinculada_restofy"
-                          value="true"
-                          checked={formData.vinculada_restofy === true}
-                          onChange={(e) => {
-                            setFormData(prev => ({ ...prev, vinculada_restofy: true }));
-                          }}
-                          disabled={loading}
-                          style={{ width: '18px', height: '18px', cursor: 'pointer' }}
-                        />
-                        <span>Sí</span>
-                      </label>
-                      <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '15px' }}>
-                        <input
-                          type="radio"
-                          name="vinculada_restofy"
-                          value="false"
-                          checked={formData.vinculada_restofy === false}
-                          onChange={(e) => {
-                            setFormData(prev => ({ ...prev, vinculada_restofy: false }));
-                          }}
-                          disabled={loading}
-                          style={{ width: '18px', height: '18px', cursor: 'pointer' }}
-                        />
-                        <span>No</span>
-                      </label>
-                    </div>
-                    <small className="field-help">
-                      Selecciona "Sí" si la empresa utiliza Restofy. Si seleccionas "No", los campos de configuración de Restofy no se mostrarán.
-                    </small>
-                  </div>
-                </div>
-                {formData.vinculada_restofy && (
-                  <ConfiguracionRestofy
-                    formData={formData}
-                    handleInputChange={handleInputChange}
-                    loading={loading}
-                  />
-                )}
-              </>
             )}
 
             {activeTab === 'comprobantes-ventas' && (

@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
-from routes import auth_routes, procesamiento_routes, empresa_routes, zip_routes, ubicaciones_routes, admin_routes, restofy_routes, tipo_comprobante_routes
+from routes import auth_routes, procesamiento_routes, empresa_routes, zip_routes, ubicaciones_routes, admin_routes, tipo_comprobante_routes
 from config.settings import settings
 import logging
 from datetime import datetime
@@ -56,7 +56,6 @@ app.include_router(empresa_routes.router, prefix="/api/empresas", tags=["Empresa
 app.include_router(zip_routes.router, prefix="/api/zip", tags=["Archivos ZIP"])
 app.include_router(ubicaciones_routes.router, prefix="/api/ubicaciones", tags=["Ubicaciones"])
 app.include_router(admin_routes.router, prefix="/api/admin", tags=["Administración"])
-app.include_router(restofy_routes.router, prefix="/api/restofy", tags=["Restofy"])
 app.include_router(tipo_comprobante_routes.router, tags=["Tipos de Comprobantes"])
 
 @app.get("/")

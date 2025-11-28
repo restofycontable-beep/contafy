@@ -86,7 +86,6 @@ class EmpresaController:
                     "nombre_comercial": empresa.nombre_comercial,
                     "representante_nombre": empresa.representante_nombre,
                     "representante_nit": empresa.representante_nit,
-                    "restofysas_token": empresa.restofysas_token,
                     "created_at": empresa.created_at.isoformat() if empresa.created_at else None,
                     "updated_at": empresa.updated_at.isoformat() if empresa.updated_at else None
                 }

@@ -29,15 +29,6 @@ class Empresa(BaseModel):
     # Usuario propietario
     usuario_id = Column(Integer, ForeignKey('users.id'), nullable=False)
     
-    # Token ContRestofySas (opcional)
-    token_restofysas = Column("restofysas_token", String(500), nullable=True)
-    
-    # URL de Restofy (opcional) - Cada empresa tiene su propia URL completa
-    url_restofy = Column("restofy_url", String(500), nullable=True)
-    
-    # Indicador si la empresa está vinculada con Restofy
-    vinculada_restofy = Column(Boolean, default=False, nullable=False)
-    
     # Configuración de comprobantes (JSON)
     configuracion_comprobantes = Column(String(1000), nullable=True)
     
@@ -68,13 +59,6 @@ class Empresa(BaseModel):
     
     def __repr__(self):
         return f"<Empresa(nit='{self.nit}', razon_social='{self.razon_social}')>"
-    
-    def tiene_restofy_configurado(self) -> bool:
-        """
-        Verifica si la empresa tiene Restofy configurado
-        Retorna True si está vinculada con Restofy Y tiene URL y token configurados
-        """
-        return bool(self.vinculada_restofy and self.url_restofy and self.token_restofysas)
     
     def to_dict(self):
         """
@@ -166,9 +150,6 @@ class Empresa(BaseModel):
             'codigo_departamento': self.codigo_departamento,
             'codigo_ciudad': self.codigo_ciudad,
             'usuario_id': self.usuario_id,
-            'token_restofysas': self.token_restofysas,
-            'url_restofy': self.url_restofy,
-            'vinculada_restofy': self.vinculada_restofy if hasattr(self, 'vinculada_restofy') else False,
             'configuracion_comprobantes': config_comprobantes,
             'configuracion_comprobantes_compras': config_comprobantes_compras,
             'registro_cuentas': registro_cuentas,
@@ -178,7 +159,6 @@ class Empresa(BaseModel):
             'registro_cuentas_nota_credito': registro_cuentas_nota_credito,
             'registro_cuentas_factura_compra': registro_cuentas_factura_compra,
             'registro_cuentas_nota_credito_compra': registro_cuentas_nota_credito_compra,
-            'tiene_restofy': self.tiene_restofy_configurado(),
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'updated_at': self.updated_at.isoformat() if self.updated_at else None,
             'is_active': self.is_active

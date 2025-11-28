@@ -432,24 +432,6 @@ const ListaEmpresas = ({ onViewChange, onEmpresaSelect }) => {
                 ) : configuraciones[empresa.id] ? (
                   <div className="config-details">
                     <div className="config-section">
-                      <h5>🔐 Token RestofySAS</h5>
-                      <div className="config-item">
-                        <strong>Estado:</strong>
-                        <span className={configuraciones[empresa.id].token_restofysas ? 'status-ok' : 'status-warning'}>
-                          {configuraciones[empresa.id].token_restofysas ? '✅ Configurado' : '⚠️ No configurado'}
-                        </span>
-                      </div>
-                      {configuraciones[empresa.id].token_restofysas && (
-                        <div className="config-item">
-                          <strong>Token:</strong>
-                          <span className="token-preview">
-                            {configuraciones[empresa.id].token_restofysas.substring(0, 10)}...
-                          </span>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="config-section">
                       <h5>📊 Tipos de Comprobantes</h5>
                       <div className="config-item">
                         <strong>📄 Factura:</strong>

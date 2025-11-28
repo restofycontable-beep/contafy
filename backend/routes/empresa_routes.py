@@ -67,9 +67,6 @@ class EmpresaCreate(BaseModel):
     direccion: str  # Obligatorio
     codigo_departamento: str  # Obligatorio
     codigo_ciudad: str  # Obligatorio
-    vinculada_restofy: bool = False  # Indicador si la empresa está vinculada con Restofy
-    token_restofysas: str = None  # Token de Restofy (opcional - solo para empresas con Restofy)
-    url_restofy: str = None
     configuracion_comprobantes: dict = None
     configuracion_comprobantes_compras: dict = None
     registro_cuentas: dict = None
@@ -81,9 +78,6 @@ class EmpresaCreate(BaseModel):
     registro_cuentas_nota_credito_compra: dict = None
 
 class ConfiguracionEmpresa(BaseModel):
-    vinculada_restofy: bool = None  # Indicador si la empresa está vinculada con Restofy
-    token_restofysas: str = None  # Token de Restofy (opcional)
-    url_restofy: str = None
     configuracion_comprobantes: dict = None
     configuracion_comprobantes_compras: dict = None
     registro_cuentas: dict = None
@@ -95,7 +89,6 @@ class EmpresaResponse(BaseModel):
     nombre_comercial: str = None
     representante_nombre: str
     representante_nit: str
-    token_restofysas: str = None
     is_active: bool
 
 @router.post("/", response_model=EmpresaResponse)
@@ -196,9 +189,6 @@ async def crear_empresa(
             codigo_pais='Co',  # Colombia por defecto
             codigo_departamento=empresa.codigo_departamento,
             codigo_ciudad=empresa.codigo_ciudad,
-            vinculada_restofy=empresa.vinculada_restofy if hasattr(empresa, 'vinculada_restofy') else False,
-            token_restofysas=empresa.token_restofysas,
-            url_restofy=empresa.url_restofy,
             # Ya no guardamos configuracion_comprobantes en JSON - se guarda en la tabla tipos_comprobantes
             configuracion_comprobantes=None,
             configuracion_comprobantes_compras=None,
@@ -397,13 +387,6 @@ async def actualizar_empresa(
         empresa_actual.direccion = empresa.direccion
         empresa_actual.codigo_departamento = empresa.codigo_departamento
         empresa_actual.codigo_ciudad = empresa.codigo_ciudad
-        # Configuración de Restofy (opcional - solo para empresas con Restofy)
-        if hasattr(empresa, 'vinculada_restofy') and empresa.vinculada_restofy is not None:
-            empresa_actual.vinculada_restofy = empresa.vinculada_restofy
-        if empresa.token_restofysas is not None:
-            empresa_actual.token_restofysas = empresa.token_restofysas
-        if empresa.url_restofy is not None:
-            empresa_actual.url_restofy = empresa.url_restofy
         # Actualizar comprobantes en la nueva tabla tipos_comprobantes (no en JSON)
         if empresa.configuracion_comprobantes is not None:
             try:
@@ -534,14 +517,6 @@ async def actualizar_configuracion_empresa(
                     "error": "Empresa no encontrada"
                 }
             )
-
-        # Actualizar configuración de Restofy si se proporciona (opcional)
-        if configuracion.vinculada_restofy is not None:
-            empresa.vinculada_restofy = configuracion.vinculada_restofy
-        if configuracion.token_restofysas is not None:
-            empresa.token_restofysas = configuracion.token_restofysas
-        if configuracion.url_restofy is not None:
-            empresa.url_restofy = configuracion.url_restofy
 
         # Actualizar configuración de comprobantes si se proporciona
         # Actualizar comprobantes en la nueva tabla tipos_comprobantes (no en JSON)

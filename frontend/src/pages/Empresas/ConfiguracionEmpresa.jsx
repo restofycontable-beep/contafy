@@ -192,20 +192,6 @@ const ConfiguracionEmpresa = ({ empresaId, onViewChange }) => {
             <label>NIT Representante:</label>
             <span className="info-value">{empresa.representante_nit}</span>
           </div>
-          <div className="info-item">
-            <label>URL Restofy:</label>
-            <span className="info-value">{empresa.url_restofy || 'No configurado'}</span>
-          </div>
-          <div className="info-item">
-            <label>Token RestofySAS:</label>
-            <span className="info-value">{empresa.token_restofysas ? '✅ Configurado' : 'No configurado'}</span>
-          </div>
-          <div className="info-item">
-            <label>Estado Restofy:</label>
-            <span className={`info-value ${empresa.tiene_restofy ? 'status-ok' : 'status-warning'}`}>
-              {empresa.tiene_restofy ? '✅ Configurado' : '⚠️ No configurado'}
-            </span>
-          </div>
         </div>
       </div>
 

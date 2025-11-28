@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import NuevoDocumentoModal from '../../components/procesamiento/NuevoDocumentoModal';
-import RestofyPanel from '../../components/restofy/RestofyPanel';
 import { useAuth } from '../../contexts/AuthContext';
 import './GestionarEmpresa.css';
 
@@ -15,7 +14,6 @@ const GestionarEmpresa = ({ empresaId, onViewChange }) => {
   const [mostrarInfoEmpresa, setMostrarInfoEmpresa] = useState(false);
   const [mostrarZips, setMostrarZips] = useState(false);
   const [mostrarNomina, setMostrarNomina] = useState(false);
-  const [mostrarFacturasRestofy, setMostrarFacturasRestofy] = useState(false);
 
   useEffect(() => {
     if (empresaId) {
@@ -324,30 +322,6 @@ const GestionarEmpresa = ({ empresaId, onViewChange }) => {
             </div>
           </button>
 
-          <button
-            className={`action-card restofy-action-card ${empresa?.tiene_restofy ? '' : 'action-card-warning'}`}
-            onClick={() => {
-              setMostrarFacturasRestofy(!mostrarFacturasRestofy);
-              // Cerrar otras secciones
-              setMostrarInfoEmpresa(false);
-              setMostrarZips(false);
-              setMostrarNomina(false);
-            }}
-            title={empresa?.tiene_restofy ? "Ver datos de Restofy (Facturas, Productos, Categorías, Items)" : "Configurar Restofy"}
-          >
-            <div className="action-card-icon restofy-icon" style={{ background: '#ff4444', borderRadius: '8px' }}>
-              🔌
-            </div>
-            <div className="action-card-content">
-              <h3>Restofy</h3>
-              <p>{empresa?.tiene_restofy ? 'Ver datos de Restofy' : 'Configurar Restofy'}</p>
-            </div>
-            {empresa?.tiene_restofy ? (
-              <span className="restofy-status-badge configured">✅ Configurado</span>
-            ) : (
-              <span className="restofy-status-badge not-configured">⚠️ Requiere Configuración</span>
-            )}
-          </button>
 
           <button
             className="action-card action-card-danger"
@@ -395,12 +369,6 @@ const GestionarEmpresa = ({ empresaId, onViewChange }) => {
                 <div className="info-item-detalle">
                   <strong>Fecha de Registro:</strong>
                   <span>{new Date(empresa.created_at).toLocaleString('es-ES')}</span>
-                </div>
-                <div className="info-item-detalle">
-                  <strong>Token RestofySAS:</strong>
-                  <span className={empresa.restofysas_token ? 'status-ok' : 'status-warning'}>
-                    {empresa.restofysas_token ? '✅ Configurado' : '⚠️ No configurado'}
-                  </span>
                 </div>
               </div>
             </div>
@@ -499,40 +467,6 @@ const GestionarEmpresa = ({ empresaId, onViewChange }) => {
           </div>
         )}
 
-        {/* Sección de Restofy */}
-        {mostrarFacturasRestofy && (
-          <div className="empresa-restofy-section">
-            <div className="restofy-section-header">
-              <h4>🔌 Restofy - Integración de Datos</h4>
-              <button
-                className="btn btn-secondary"
-                onClick={() => setMostrarFacturasRestofy(false)}
-              >
-                Cerrar
-              </button>
-            </div>
-            {empresa?.tiene_restofy ? (
-              <RestofyPanel empresaId={empresaId} empresa={empresa} />
-            ) : (
-              <div className="restofy-not-configured">
-                <div className="restofy-warning-icon">⚠️</div>
-                <h4>Restofy no configurado</h4>
-                <p>Esta empresa no tiene integración con Restofy configurada.</p>
-                <p>Para usar las funcionalidades de Restofy, debe configurar:</p>
-                <ul>
-                  <li>URL de Restofy (ej: https://casorellana.develop.app-restofy.com/29/api/restofy)</li>
-                  <li>Token de autenticación RestofySAS</li>
-                </ul>
-                <button
-                  className="btn btn-primary"
-                  onClick={() => onViewChange && onViewChange('editar-empresa', empresaId)}
-                >
-                  Configurar Restofy
-                </button>
-              </div>
-            )}
-          </div>
-        )}
 
         <div className="gestionar-empresa-footer">
           <button

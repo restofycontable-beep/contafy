@@ -30,7 +30,6 @@ class EmpresaService:
                 nombre_comercial=empresa_data.get('nombre_comercial'),
                 representante_nombre=empresa_data.get('representante_nombre'),
                 representante_nit=empresa_data.get('representante_nit'),
-                restofysas_token=empresa_data.get('restofysas_token') or None,  # Asegurar que sea None si está vacío
                 usuario_id=usuario_id
             )
             
@@ -54,7 +53,6 @@ class EmpresaService:
                         nombre_comercial=empresa_data.get('nombre_comercial'),
                         representante_nombre=empresa_data.get('representante_nombre'),
                         representante_nit=empresa_data.get('representante_nit'),
-                        restofysas_token=empresa_data.get('restofysas_token') or None,  # Asegurar que sea None si está vacío
                         usuario_id=usuario_id
                     )
                     

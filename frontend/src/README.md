@@ -1,4 +1,4 @@
-# 📁 Estructura del Frontend - ContRestofySas
+# 📁 Estructura del Frontend - Contafy
 
 ## 🏗️ Organización de Carpetas
 

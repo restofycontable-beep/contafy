@@ -93,24 +93,6 @@ def actualizar_base_datos():
         else:
             logger.info("✅ Columna usuario_id ya existe en empresas")
         
-        # Verificar si existe la columna restofysas_token en empresas
-        cursor.execute("""
-            SELECT column_name 
-            FROM information_schema.columns 
-            WHERE table_name = 'empresas' 
-            AND column_name = 'restofysas_token'
-        """)
-        
-        if not cursor.fetchone():
-            logger.info("➕ Agregando columna restofysas_token...")
-            cursor.execute("""
-                ALTER TABLE empresas 
-                ADD COLUMN restofysas_token VARCHAR(500)
-            """)
-            logger.info("✅ Columna restofysas_token agregada")
-        else:
-            logger.info("✅ Columna restofysas_token ya existe")
-        
         # Verificar si existe la columna configuracion_comprobantes en empresas
         cursor.execute("""
             SELECT column_name 
@@ -381,7 +363,6 @@ def actualizar_base_datos():
                 SET representante_nombre = 'Representante Legal',
                     representante_nit = '12345678-9',
                     usuario_id = 1,
-                    restofysas_token = NULL,
                     direccion = COALESCE(direccion, 'Calle 123 #45-67'),
                     codigo_pais = COALESCE(codigo_pais, 'Co'),
                     codigo_departamento = COALESCE(codigo_departamento, '63'),
@@ -405,8 +386,8 @@ def actualizar_base_datos():
             datos_10_cuentas = '{"cuenta_1": {"codigo": "", "nombre": "", "activo": false, "naturaleza": "debito"}, "cuenta_2": {"codigo": "", "nombre": "", "activo": false, "naturaleza": "debito"}, "cuenta_3": {"codigo": "", "nombre": "", "activo": false, "naturaleza": "debito"}, "cuenta_4": {"codigo": "", "nombre": "", "activo": false, "naturaleza": "debito"}, "cuenta_5": {"codigo": "", "nombre": "", "activo": false, "naturaleza": "debito"}, "cuenta_6": {"codigo": "", "nombre": "", "activo": false, "naturaleza": "debito"}, "cuenta_7": {"codigo": "", "nombre": "", "activo": false, "naturaleza": "debito"}, "cuenta_8": {"codigo": "", "nombre": "", "activo": false, "naturaleza": "debito"}, "cuenta_9": {"codigo": "", "nombre": "", "activo": false, "naturaleza": "debito"}, "cuenta_10": {"codigo": "", "nombre": "", "activo": false, "naturaleza": "debito"}}'
             
             cursor.execute("""
-                INSERT INTO empresas (nit, razon_social, nombre_comercial, representante_nombre, representante_nit, usuario_id, restofysas_token, direccion, codigo_pais, codigo_departamento, codigo_ciudad, registro_cuentas_ventas, registro_cuentas_compras, registro_cuentas_factura_venta, registro_cuentas_nota_credito, registro_cuentas_factura_compra, registro_cuentas_nota_credito_compra)
-                VALUES ('901906032', 'Empresa Por Defecto S.A.S.', 'Empresa Defecto', 'Representante Legal', '12345678-9', 1, NULL, 'Calle 123 #45-67', 'Co', '63', '63001', %s, %s, %s, %s, %s, %s)
+                INSERT INTO empresas (nit, razon_social, nombre_comercial, representante_nombre, representante_nit, usuario_id, direccion, codigo_pais, codigo_departamento, codigo_ciudad, registro_cuentas_ventas, registro_cuentas_compras, registro_cuentas_factura_venta, registro_cuentas_nota_credito, registro_cuentas_factura_compra, registro_cuentas_nota_credito_compra)
+                VALUES ('901906032', 'Empresa Por Defecto S.A.S.', 'Empresa Defecto', 'Representante Legal', '12345678-9', 1, 'Calle 123 #45-67', 'Co', '63', '63001', %s, %s, %s, %s, %s, %s)
             """, (datos_5_cuentas, datos_5_cuentas, datos_10_cuentas, datos_10_cuentas, datos_10_cuentas, datos_10_cuentas))
             logger.info("✅ Empresa por defecto creada")
         
@@ -497,55 +478,6 @@ def actualizar_base_datos():
             logger.info("ℹ️  Permite configurar cuenta separada para base exenta")
         else:
             logger.info("✅ Columna cuenta_exenta ya existe")
-        
-        # Verificar si existe la columna restofy_url en empresas
-        cursor.execute("""
-            SELECT column_name 
-            FROM information_schema.columns 
-            WHERE table_name = 'empresas' 
-            AND column_name = 'restofy_url'
-        """)
-        
-        if not cursor.fetchone():
-            logger.info("➕ Agregando columna restofy_url (URL de Restofy)...")
-            cursor.execute("""
-                ALTER TABLE empresas 
-                ADD COLUMN restofy_url VARCHAR(500)
-            """)
-            logger.info("✅ Columna restofy_url agregada")
-            logger.info("ℹ️  URL de Restofy (opcional - solo para empresas con integración Restofy)")
-        else:
-            logger.info("✅ Columna restofy_url ya existe")
-        
-        # Verificar si existe la columna vinculada_restofy en empresas
-        cursor.execute("""
-            SELECT column_name 
-            FROM information_schema.columns 
-            WHERE table_name = 'empresas' 
-            AND column_name = 'vinculada_restofy'
-        """)
-        
-        if not cursor.fetchone():
-            logger.info("➕ Agregando columna vinculada_restofy...")
-            cursor.execute("""
-                ALTER TABLE empresas 
-                ADD COLUMN vinculada_restofy BOOLEAN DEFAULT FALSE NOT NULL
-            """)
-            logger.info("✅ Columna vinculada_restofy agregada")
-            logger.info("ℹ️  Indicador si la empresa está vinculada con Restofy")
-            
-            # Actualizar empresas existentes que ya tienen Restofy configurado
-            logger.info("🔄 Actualizando empresas existentes con Restofy configurado...")
-            cursor.execute("""
-                UPDATE empresas 
-                SET vinculada_restofy = TRUE 
-                WHERE (restofy_url IS NOT NULL AND restofy_url != '') 
-                AND (restofysas_token IS NOT NULL AND restofysas_token != '')
-            """)
-            empresas_actualizadas = cursor.rowcount
-            logger.info(f"✅ {empresas_actualizadas} empresas marcadas como vinculadas con Restofy")
-        else:
-            logger.info("✅ Columna vinculada_restofy ya existe")
         
         # Verificar si existe la columna reset_token en users
         cursor.execute("""

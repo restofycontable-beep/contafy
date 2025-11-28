@@ -1,5 +1,5 @@
 """
-Configuración del sistema ContRestofySas
+Configuración del sistema Contafy
 """
 
 import os
@@ -23,7 +23,7 @@ class Settings(BaseSettings):
     DATABASE_URL: str = Field(default="")
     DB_HOST: str = Field(default="localhost")
     DB_PORT: int = Field(default=5432)
-    DB_NAME: str = Field(default="contrestofysas")
+    DB_NAME: str = Field(default="contafy")
     DB_USER: str = Field(default="postgres")
     DB_PASSWORD: str = Field(default="")
 
