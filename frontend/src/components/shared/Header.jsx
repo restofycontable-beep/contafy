@@ -16,8 +16,37 @@ const Header = ({ user, onLogout, onMenuToggle, isSidebarOpen, empresaActiva = n
   }, []);
 
   const handleHelpClick = () => {
-    // TODO: Implementar funcionalidad de ayuda
-    alert('Mesa de Ayuda - Funcionalidad próximamente disponible');
+    // Número de WhatsApp de soporte Contafy
+    const phoneNumber = "573013709791"; // +57 3013709791
+    
+    // Mensaje personalizado con información del usuario
+    const message = encodeURIComponent(
+      `🆘 *Solicitud de Soporte - Contafy*
+
+👤 *Usuario:* ${user?.full_name || user?.username}
+📧 *Email:* ${user?.email}
+🏢 *Empresa:* ${empresaActiva?.razon_social || 'No seleccionada'}
+📅 *Fecha:* ${new Date().toLocaleString('es-CO')}
+
+Hola equipo de Contafy! Necesito ayuda con la aplicacion. Podrian asistirme por favor.
+
+Gracias por su atencion.`
+    );
+    
+    // Detectar si es dispositivo móvil
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    let whatsappUrl;
+    if (isMobile) {
+      // En móvil: intentar abrir la app de WhatsApp
+      whatsappUrl = `whatsapp://send?phone=${phoneNumber}&text=${message}`;
+    } else {
+      // En desktop: usar WhatsApp Web
+      whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
+    }
+    
+    // Abrir WhatsApp en nueva ventana/pestaña
+    window.open(whatsappUrl, '_blank');
   };
 
   return (
@@ -59,14 +88,6 @@ const Header = ({ user, onLogout, onMenuToggle, isSidebarOpen, empresaActiva = n
         <div className="header-icons hide-mobile">
           <button 
             className="header-icon-btn"
-            onClick={handleHelpClick}
-            title="Mesa de Ayuda"
-            aria-label="Mesa de Ayuda"
-          >
-            <span className="icon-emoji">👤</span>
-          </button>
-          <button 
-            className="header-icon-btn"
             onClick={() => window.location.href = '/'}
             title="Inicio"
             aria-label="Inicio"
@@ -75,16 +96,17 @@ const Header = ({ user, onLogout, onMenuToggle, isSidebarOpen, empresaActiva = n
           </button>
           <button 
             className="header-icon-btn"
-            title="Documentos"
-            aria-label="Documentos"
+            onClick={handleHelpClick}
+            title="Soporte WhatsApp - Contafy"
+            aria-label="Contactar Soporte por WhatsApp"
           >
-            <span className="icon-emoji">📄</span>
+            <span className="icon-emoji">💬</span>
           </button>
         </div>
 
         {/* Información del usuario */}
         <div className="header-user">
-          <div className="user-avatar hide-mobile">
+          <div className="user-avatar">
             {obtenerIniciales(user?.full_name || user?.username)}
           </div>
           <div className="user-info-header hide-mobile">
@@ -92,15 +114,6 @@ const Header = ({ user, onLogout, onMenuToggle, isSidebarOpen, empresaActiva = n
             <p className="user-email">{user?.email}</p>
           </div>
 
-          {/* Mesa de Ayuda en móvil */}
-          <button 
-            className="help-btn show-mobile-only"
-            onClick={handleHelpClick}
-            title="Mesa de Ayuda"
-            aria-label="Mesa de Ayuda"
-          >
-            <span className="help-icon">👤</span>
-          </button>
 
           {/* Botón de cerrar sesión */}
           <div className="header-actions">

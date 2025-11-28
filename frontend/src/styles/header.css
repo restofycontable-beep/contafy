@@ -165,27 +165,9 @@
   transition: var(--transition-base);
 }
 
+/* Botón de ayuda usa los mismos estilos que header-icon-btn */
 .help-btn {
-  background: var(--color-fondo);
-  border: 1px solid var(--color-borde);
-  border-radius: var(--border-radius);
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: var(--transition-base);
-  padding: 0;
-}
-
-.help-btn:hover {
-  background: var(--color-principal);
-  border-color: var(--color-principal);
-}
-
-.help-icon {
-  font-size: 1.1rem;
+  /* Estilos heredados de .header-icon-btn */
 }
 
 .header-user {
@@ -281,16 +263,19 @@
     display: none;
   }
   
-  .header-date {
-    display: none;
-  }
-  
+  .header-date,
   .header-icons {
     display: none;
   }
   
   .header-user {
     gap: var(--spacing-sm);
+  }
+  
+  .user-avatar {
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
   }
 }
 
@@ -319,6 +304,12 @@
   
   .header-user {
     gap: var(--spacing-sm);
+  }
+  
+  .user-avatar {
+    width: 32px;
+    height: 32px;
+    font-size: 12px;
   }
   
   .header-actions {
@@ -367,5 +358,11 @@
   .hamburger {
     width: 22px;
     height: 18px;
+  }
+  
+  .user-avatar {
+    width: 28px;
+    height: 28px;
+    font-size: 11px;
   }
 } 
