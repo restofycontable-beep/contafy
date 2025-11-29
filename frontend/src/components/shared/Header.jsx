@@ -21,12 +21,12 @@ const Header = ({ user, onLogout, onMenuToggle, isSidebarOpen, empresaActiva = n
     
     // Mensaje personalizado con información del usuario
     const message = encodeURIComponent(
-      `🆘 *Solicitud de Soporte - Contafy*
+      `*Solicitud de Soporte - Contafy*
 
-👤 *Usuario:* ${user?.full_name || user?.username}
-📧 *Email:* ${user?.email}
-🏢 *Empresa:* ${empresaActiva?.razon_social || 'No seleccionada'}
-📅 *Fecha:* ${new Date().toLocaleString('es-CO')}
+*Usuario:* ${user?.full_name || user?.username}
+*Email:* ${user?.email}
+*Empresa:* ${empresaActiva?.razon_social || 'No seleccionada'}
+*Fecha:* ${new Date().toLocaleString('es-CO')}
 
 Hola equipo de Contafy! Necesito ayuda con la aplicacion. Podrian asistirme por favor.
 
